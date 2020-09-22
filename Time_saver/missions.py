@@ -69,6 +69,13 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
             try:
                 num = int(str(tree.xpath('//*[@id="inProgressPanel"]/div[1]/strong')[0].text).split("#")[1].split(":")[0])
             except:
+               try:
+                   num = int(str(tree.xpath('//*[@id="startPanel"]/div[2]/strong')[0].text).split("#")[1].split(":")[0])
+               except:
+                   c = session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
+                   continue
+
+            if not num:
                 print("You have completed all your missions for today, come back tomorrow!")
                 return
             print(f"Mission number {num}")            
@@ -78,7 +85,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
             if "MISSION_REWARD_OK" not in str(c.url) and "?action=COMPLETE" not in str(c.url):
                 if num == 1:
                     session.get(URL + "inboxMessages.html")
-                    session.get(URL + "profile.html?id=1")
+                    session.get(f"{URL}profile.html?id={my_id}")
                 
                 elif num in (2, 4, 16, 26, 27, 35, 42, 58):
                     double_click(server, session=session)
