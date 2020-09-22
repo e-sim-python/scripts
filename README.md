@@ -1,6 +1,5 @@
 # E-sim python library
-
-[URL=https://info.flagcounter.com/5j6R][IMG]https://s01.flagcounter.com/mini/5j6R/bg_FFFFFF/txt_000000/border_CCCCCC/flags_0/[/IMG][/URL]
+[![Flag Counter](https://s01.flagcounter.com/mini/5j6R/bg_FFFFFF/txt_000000/border_CCCCCC/flags_0/)](https://info.flagcounter.com/5j6R)
 
 ## You always wanted to use automated software, but did not have the necessary knowledge?
 ### Here are few examples:
