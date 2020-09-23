@@ -23,12 +23,13 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
     api = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
     if not session:
         session = login(server)
-    r = session.get(URL)
+    r = session.get(link)
+    print(r.url)
     tree = fromstring(r.content)
-    food = tree.xpath('//*[@id="foodLimit2"]')[0].text
-    gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
-    food_limit = tree.xpath('//*[@id="foodQ5"]/text()')[0]
-    gift_limit = tree.xpath('//*[@id="giftQ5"]/text()')[0]
+    food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
+    gift_limit = tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
+    food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
+    gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
     if weaponQuality != "0":
         wep = tree.xpath(f'//*[@id="Q{weaponQuality}WeaponStock"]/text()')[0]
     else:
@@ -44,50 +45,57 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
                           i == region['regionId'] and region['occupantId'] == api['attackerId']]
             except:
                 aBonus = [api['attackerId'] * 6]
-            fly(URL, aBonus[0], ticketQuality, session)
+            fly(server, aBonus[0], ticketQuality, session)
         elif side.lower() == "defender":
-            fly(URL, api['regionId'], ticketQuality, session)
+            fly(server, api['regionId'], ticketQuality, session)
     elif api['type'] == "RESISTANCE":
-        fly(URL, api['regionId'], ticketQuality, session)
+        fly(server, api['regionId'], ticketQuality, session)
     print(f"Limits: {food}/{gift}. Storage: {food_limit}/{gift_limit}/{wep} Q{weaponQuality} weps.")
     DamageDone = 0
     start_time = api["hoursRemaining"] * 3600 + api["minutesRemaining"] * 60 + api["secondsRemaining"]
     start = time.time()
     update = 1
     Damage = 0
-    r = session.get(link)
-    tree = fromstring(r.content)
     hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-    for _ in range(1, int(food) + int(gift)):
+    Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
+    for _ in range(1, food + gift):
         if time.time() - start > int(start_time):
-            break  # round is over
-        Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
-        food = tree.xpath('//*[@id="foodLimit2"]')[0].text
-        gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
-        if Health <= 50:
-            if int(gift) and int(gift_limit):
-                # use gifts limits first (save motivates limits)
-                use = "gift"
-            elif not int(food) or not int(food_limit):
-                use = "gift"
-            else:
-                use = "eat"
-            session.post(f"{URL}{use}.html", data={'quality': 5})
-            if not int(food) and not int(gift):
+            break  # round is over        
+
+        if Health < 50:
+            if (not food or not int(food_limit)) and (not gift or not int(gift_limit)):
                 print("done limits")
                 break
+            if gift and int(gift_limit):
+                # use gifts limits first (save motivates limits)
+                use = "gift"
+                gift -= 1
+            elif not food or not int(food_limit):
+                use = "gift"
+                gift -= 1
+            else:
+                use = "eat"
+                food -= 1
+            session.post(f"{URL}{use}.html", data={'quality': 5})
+            Health += 50
         for _ in range(5):
             try:
-                r = session.post(
+                post_hit = session.post(
                     f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}&value=Berserk")
-                tree = fromstring(r.content)
+                print(post_hit.url)
+                tree = fromstring(post_hit.content)
                 Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
+                Health -= 50
                 if dmg < 1000:
                     Damage = 5  # Berserk
                 update += 1
                 break
             except:
                 # "Slow down"
+                delete = tree.xpath('//img/@src')[0]
+                if "delete.png" in delete:
+                    break
+                print("Slow down")
                 time.sleep(2)
         DamageDone += Damage
         hits_or_dmg = "hits" if dmg < 1000 else "dmg"
@@ -97,7 +105,7 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
         if DamageDone >= dmg:
             print(f"Done {DamageDone} {hits_or_dmg}")
             break
-        if not int(food) and not int(gift) and not Health:
+        if not food and not gift and not Health:
             use_medkit = input(f"Done limits. use medkit and continue (y/n)?")
             if use_medkit == "y":
                 session.post(f"{URL}medkit.html")
