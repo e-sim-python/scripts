@@ -2,10 +2,12 @@ def imports():
     """Try importing most required modules for this library"""
     try:
         import requests
+    except ImportError as packet:
+        install([packet.name])
+    try:
         import lxml
     except ImportError as packet:
         install([packet.name])
-
 
 def install(packets):
     import subprocess
