@@ -42,16 +42,23 @@ def products(server, product, amount, session=""):
                 tree = fromstring(monetaryMarket.content)
                 ID = tree.xpath("//tr[2]//td[4]//form[1]//input[@value][2]")[0].value
                 CC_offer = float(tree.xpath('//tr[2]//td[2]//b')[0].text)
-                amount = CC_offer if CC_offer < (int(amount) - productsBought) * cost else (int(
+                cc_quantity = CC_offer if CC_offer < (int(amount) - productsBought) * cost else (int
                     amount) - productsBought) * cost
-                payload = {'action': "buy", 'id': ID, 'ammount': amount}
+                # Todo: No gold case
+                payload = {'action': "buy", 'id': ID, 'ammount': cc_quantity}
                 buy_cc = session.post(URL + "monetaryMarket.html", data=payload)
                 print(buy_cc.url)
-                MMBought += amount
+                MMBought += cc_quantity
 
-            quantity = stock if stock < (int(amount) - productsBought) else (int(amount) - productsBought)
+            quantity = int(MMBought / cost) - productsBought
+            if quantity > stock:
+                quantity = stock
+            if quantity > int(amount):
+                quantity = int(amount)
             payload = {'action': "buy", 'id': productId, 'quantity': quantity, "submit": "Buy"}
             buy_product = session.post(URL + "productMarket.html", data=payload)
+            if "POST_PRODUCT_NOT_ENOUGH_MONEY" in str(buy_product.url):
+                break  # won't happen
             print(buy_product.url)
             productsBought += quantity
             if productsBought >= int(amount):
