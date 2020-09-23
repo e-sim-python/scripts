@@ -70,9 +70,9 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                 num = int(str(tree.xpath('//*[@id="inProgressPanel"]/div[1]/strong')[0].text).split("#")[1].split(":")[0])
             except:
                 # need to collect reward / no more missions
-                c = await session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
+                c = session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
                 if "?action=COMPLETE" not in str(c.url):
-                    await ctx.send(f"No more missions today. Come back tommorrow!")
+                    print(f"No more missions today. Come back tommorrow!")
                     return
                 print(c.url)
                 continue
