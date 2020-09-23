@@ -86,9 +86,7 @@ def login(server):
         old_cookies = requests.utils.cookiejar_from_dict(data[server])
         session.cookies.update(old_cookies)
         online_check = session.get(URL + "storage.html", headers=headers)
-        print(online_check.url)
         online_check = "notLoggedIn" in str(online_check.url)
-    print(online_check)        
     if online_check or server not in data:
         nick, password = get_nick_and_pw(server)
         try:
