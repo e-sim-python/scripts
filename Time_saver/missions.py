@@ -71,7 +71,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
             except:
                 # need to collect reward / no more missions
                 c = session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
-                if "?action=COMPLETE" not in str(c.url):
+                if "MISSION_REWARD_OK" not in str(c.url) and "?action=COMPLETE" not in str(c.url):
                     print(f"No more missions today. Come back tommorrow!")
                     return
                 print(c.url)
@@ -89,11 +89,11 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     session.get(URL + "inboxMessages.html")
                     session.get(f"{URL}profile.html?id={my_id}")
                 
-                elif num in (2, 4, 16, 26, 27, 35, 42, 58):
+                elif num in (2, 4, 16, 27, 28, 36, 43, 59):
                     double_click(server, session=session)
                 elif num in (3, 7):
                     job(server, session)
-                elif num in (5, 31, 34, 37, 39, 46, 50, 52, 63):
+                elif num in (5, 26, 32, 35, 38, 40, 47, 51, 53, 64):
                     if num == 31:
                         restores = "3"
                         print(f"Hitting {restores} restores, it might take a while")
@@ -115,7 +115,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     productId = tree.xpath('//*[@id="command"]/input[1]')[0].value
                     payload = {'action': "buy", 'id': productId, 'quantity': 1, "submit": "Buy"}
                     session.post(URL + "productMarket.html", data=payload)
-                elif num in (12, 53):
+                elif num in (12, 54):
                     Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
                     apiRegions = requests.get(URL + "apiRegions.html").json()
                     capital = [row['id'] if row['homeCountry'] == Citizen['citizenshipId'] and
@@ -162,24 +162,27 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                                "action": "POST_OFFER", "price": 0.1, "quantity": 100}
                     sell_grain = session.post(URL + "storage.html", data=payload)
                     print(sell_grain.url)
+                elif num == 25:
+                    payload = {'setBg': "LIGHT_I", 'action': "CHANGE_BACKGROUND"}
+                    session.post(URL + "editCitizen.html", data=payload)                    
                 # day 3
-                elif num == 28:
-                    for article_id in range(2, 7):
-                        session.post(f"{URL}vote.html?id={articleId}")
                 elif num == 29:
-                    session.post(f"{URL}sub.html?id=1")
+                    for article_id in range(2, 7):
+                        session.post(f"{URL}vote.html?id={article_id}")
                 elif num == 30:
+                    session.post(f"{URL}sub.html?id=1")
+                elif num == 31:
                     citizenship_or_mu_application(server, randint(1, 21), "mu", session)
                 # day 4
-                elif num == 36:
+                elif num == 37:
                     shout_body = choice(["Mission: Get to know the community better", "Hi",
                                           "Hello", "Hi guys :)", "Mission", "IRC / Skype / TeamSpeak"])
                     payload = {'action': "POST_SHOUT", 'body': shout_body, 'sendToCountry': "on",
                                "sendToMilitaryUnit": "on", "sendToParty": "on", "sendToFriends": "on"}
                     session.post(f"{URL}shoutActions.html", data=payload)
-                elif num == 38:
+                elif num == 39:
                     session.get(URL + 'friends.html?action=PROPOSE&id=1')
-                elif num == 40:
+                elif num == 41:
                     for _ in range(10):
                         ID = randint(1, 100)
                         payload = {"action": "NEW", "key": f"Article {ID}", "submit": "Publish",
@@ -187,7 +190,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                         comment = session.post(URL + "comment.html", data=payload)
                         if "MESSAGE_POST_OK" in str(comment.url):
                             break
-                elif num == 41:
+                elif num == 42:
                     try:
                         b = session.get(URL + "partyStatistics.html?statisticType=MEMBERS")
                         tree = fromstring(b.content)
@@ -199,39 +202,39 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     except:
                         pass
                 # day 5
-                elif num == 44:
+                elif num == 45:
                     session.post(URL + "replyToShout.html?id=1",
                                  data={"body": choice(["OK", "Whatever", "Thanks", "Discord?"]),
                                        "submit": "Shout!"})
-                elif num == 45:
+                elif num == 46:
                     payload = {'itemType': "STEROIDS", 'storageType': "SPECIAL_ITEM", 'action': "BUY", "quantity": 1}
                     session.post(URL + "storage.html", data=payload)
-                elif num == 48:
+                elif num == 49:
                     i = session.get(URL + 'storage.html?storageType=EQUIPMENT')
                     tree = fromstring(i.content)
                     ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0]
                     payload = {'action': "EQUIP", 'itemId': ID.replace("#", "")}
                     session.post(URL + "equipmentAction.html", data=payload)
-                elif num == 49:
+                elif num == 50:
                     session.post(f"{URL}shoutVote.html?id=1&vote=1")
-                elif num == 51:
+                elif num == 52:
                     fly(server, 1, 3, session)
-                elif num == 54:
+                elif num == 55:
                     requests.get(URL + f"lan.{my_id}/")
-                elif num in (60, 55):
+                elif num in (61, 55):
                     send_motivates(server, "ALL", session)
-                elif num == 56:
+                elif num == 57:
                     Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
                     payload = {'receiverName': f"{Citizen['citizenship']} Org", "title": "Hi",
                                "body": choice(["Hi", "Can you send me some gold?", "Hello there!", "Discord?"]), "action": "REPLY", "submit": "Send"}
                     session.post(URL + "composeMessage.html", data=payload)
 
-                elif num == 57:
+                elif num == 58:
                     session.post(f"{URL}sub.html?id=2")
 
-                elif num == 59:
+                elif num == 60:
                     friends(server, "online", session)
-                elif num == 62:
+                elif num == 63:
                     session.post(f"{URL}medkit.html")
                     # if food & gift limits > 10 it won't work.
                 else:
