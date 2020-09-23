@@ -69,11 +69,13 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
             try:
                 num = int(str(tree.xpath('//*[@id="inProgressPanel"]/div[1]/strong')[0].text).split("#")[1].split(":")[0])
             except:
-               try:
-                   num = int(str(tree.xpath('//*[@id="startPanel"]/div[2]/strong')[0].text).split("#")[1].split(":")[0])
-               except:
-                   c = session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
-                   continue
+                # need to collect reward / no more missions
+                c = await session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
+                if "?action=COMPLETE" not in str(c.url):
+                    await ctx.send(f"No more missions today. Come back tommorrow!")
+                    return
+                print(c.url)
+                continue
 
             if not num:
                 print("You have completed all your missions for today, come back tomorrow!")
@@ -245,7 +247,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                             return
                         else:
                             print(f"Skipped mission {num}")
-                print(c.url)
+            print(c.url)
         except Exception as error:
             print(error)
             time.sleep(5)
