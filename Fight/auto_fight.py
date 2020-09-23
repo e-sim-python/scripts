@@ -15,13 +15,13 @@ def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gift="",
     for _ in range(int(restores)):
         restores_left -= 1
         try:
+            session = login(server)
             try:
                 int(battle_id)  # user gave valid id
             except:
-                battle_id = _get_battle_id(server, battle_id)
+                battle_id = _get_battle_id(server, battle_id, session)
             print(f'{URL}battle.html?id={battle_id} side: {side}')
             if battle_id:
-                session = login(server)
                 home = session.get(URL)
                 tree = fromstring(home.content)
                 check = tree.xpath('//*[@id="taskButtonWork"]//@href')  # checking if you can work
@@ -31,7 +31,7 @@ def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gift="",
                 apiBattles = requests.get(f"{URL}apiBattles.html?battleId={battle_id}").json()[0]
                 if 8 in (apiBattles['attackerScore'], apiBattles['defenderScore']):
                     print("Battle has finished, i will search for another one")
-                    battle_id = _get_battle_id(server, battle_id)
+                    battle_id = _get_battle_id(server, battle_id, session)
 
                 battle_request = session.get(f'{URL}battle.html?id={battle_id}')
                 tree = fromstring(battle_request.content)
