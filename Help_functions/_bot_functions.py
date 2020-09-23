@@ -28,8 +28,7 @@ def _fix_product_name(product):
     else:
         return Q, item
 
-def _get_battle_id(server, battle_id):
-    # Functions: requests, fromstring
+def _get_battle_id(server, battle_id, session):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
     apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
@@ -43,7 +42,7 @@ def _get_battle_id(server, battle_id):
         if apiCitizen["level"] < 15:
             int("a")  # PRACTICE_BATTLE
         if battle_id == "event":
-            battles = requests.get(f"{URL}battles.html?countryId={apiCitizen['citizenshipId']}&filter=EVENT")
+            battles = session.get(f"{URL}battles.html?countryId={apiCitizen['citizenshipId']}&filter=EVENT")
             tree = fromstring(battles.content)
             links = tree.xpath("//tr[position()<12]//td[1]//div[2]//@href")
             for link in links:
@@ -54,15 +53,15 @@ def _get_battle_id(server, battle_id):
                     break
 
         else:
-            battles = requests.get(f"{URL}battles.html?countryId={occupantId}&filter=NORMAL")
+            battles = session.get(f"{URL}battles.html?countryId={occupantId}&filter=NORMAL")
             tree = fromstring(battles.content)
             battle_id = tree.xpath('//tr[2]//td[1]//div[2]//@href')
         if not battle_id:
-            battles = requests.get(f"{URL}battles.html?countryId={occupantId}&filter=RESISTANCE")
+            battles = session.get(f"{URL}battles.html?countryId={occupantId}&filter=RESISTANCE")
             tree = fromstring(battles.content)
             battle_id = tree.xpath('//tr[2]//td[1]//div[2]//@href')
     except:
-        battles = requests.get(f"{URL}battles.html?filter=PRACTICE_BATTLE")
+        battles = session.get(f"{URL}battles.html?filter=PRACTICE_BATTLE")
         tree = fromstring(battles.content)
         battle_id = tree.xpath('//tr[2]//td[1]//@href')
     battle_id = battle_id[0].replace("battle.html?id=", "") or None
