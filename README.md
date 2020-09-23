@@ -19,7 +19,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 ### Usage:
 - Download and Install [python 3.6+](https://www.python.org/downloads/) (There should also be an app for android).
 - Download the library as zip file ([Code -> download ZIP](https://github.com/e-sim-python/scripts/archive/master.zip)) and extract it. (If you can't extract, [download WinRAR](https://www.rarlab.com/))
-- At the first run, you will have to excute [install_packets.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py), or install `requests` and `lxml` manually (type `pip install requests` on your start menu`).
+- At the first run, you will have to excute [install_packets.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py), or install `requests` and `lxml` manually (type `pip install requests` on your start menu, or `py -m pip install requests` in your cmd).
 - Double click (in your computer) on any script you want.
 - Alternative (advanced): import the function to another script. If you need help, execute `print (function_name.__doc__)`
 
