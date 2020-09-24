@@ -27,7 +27,7 @@ def method4(package):
     import lxml
     
 
-for package in ["lxml", "requests"]:
+for package in ["requests", "lxml"]:
     try:
         method1(package)
     except:
@@ -43,6 +43,5 @@ for package in ["lxml", "requests"]:
                     print(e)
                     print("Sorry, but i couldn't help. search in google for more options (your goal is to install requests and lxml modules")
                     print("Here's a good place to start: https://www.google.com/search?q=Installing+python+module+within+code ")
+                    
 input("Press any key to continue")
-
-
