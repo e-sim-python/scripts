@@ -7,7 +7,7 @@
 - Bid on all auctions with a single click
 - Dump all limits with a single click.
 - Complete all the missions with a single click.
-- Auto-hunt BH's (soon)
+- Auto-hunt BHs
 - And much more!
 
 (As far as we know, no one has ever been punished for using those scripts. However, the use is at your own risk, of course.)
