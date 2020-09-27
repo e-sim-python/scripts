@@ -95,7 +95,6 @@ for num in range(1,16):
         if "x" in ammount:item = tree.xpath(f'//*[@id="storageConteiner"]//div//div//div[1]//div[{num}]/b')[0].text
         if item != "Medkit":storage.append(f'{ammount.replace("x","")} {item}')    
     except:break
-
 i = session.get(url+'storage.html?storageType=PRODUCT')
 tree = html.fromstring(i.content)
 storage1 = {}
