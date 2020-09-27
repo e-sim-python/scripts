@@ -20,7 +20,7 @@ def define_login_details(nick="", password="", server=""):
                 writer.writerow(["Server", "Nick", "Password"])
             writer.writerow([server, nick, password])
 
-    if not os.path.isfile(file_name):
+    if not os.path.isfile(file_name) or server:
         with open(file_name, 'a', newline='') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(["Server", "Nick", "Password"])
@@ -44,16 +44,21 @@ def define_login_details(nick="", password="", server=""):
 
 def get_nick_and_pw(server):
     nick, password = "", ""
-    with open('../Help_functions/login_details.csv', 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if row[0] == server:
-                nick, password = row[1], row[2]
-                break
-    if nick and password:
-        return nick, password
-    else:
-        define_login_details()
+    file_name = '../Help_functions/login_details.csv'
+    while 1:
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if row[0] == server:
+                        nick, password = row[1], row[2]
+                        break
+        else:
+            define_login_details(server=server)
+        if nick and password:
+            return nick, password
+        else:
+            define_login_details(server=server)
 
 
 def login(server):
