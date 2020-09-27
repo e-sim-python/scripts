@@ -1,5 +1,8 @@
 from login import login, get_nick_and_pw
-from fly import fly
+if __name__ == "__main__":
+    from fly import fly
+else:
+    from .fly import fly
 
 from lxml.html import fromstring
 import requests
@@ -8,7 +11,9 @@ import time
 def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
     """Auto hunt BHs (attack and RWs)"""
     URL = f"https://{server}.e-sim.org/"
-    maxDmgForBh, startTime = int(maxDmgForBh), int(startTime)
+    if "t" in startTime.lower():
+        startTime = float(startTime.lower().replace("t", "")) * 60
+    maxDmgForBh, startTime = int(maxDmgForBh.replace("k", "000")), int(startTime)
     print(f"Start hunting at {server}.")
     nick = get_nick_and_pw(server)[0]
     apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
@@ -153,3 +158,12 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         hunting(side, side_dmg, session)
                 else:
                     continue
+
+if __name__ == "__main__":
+    print(hunt.__doc__)
+    server = input("Server: ")
+    max_dmg_for_bh = input("Max dmg for bh: ")
+    start_time = input("When to start? (If you input 60, it means t1) ")
+    weapon_quality = input("Weapon quality (0-5): ")
+    hunt(server, max_dmg_for_bh, start_time, weapon_quality)
+    input("Press any key to continue")
