@@ -99,8 +99,10 @@ def login(server):
         r = session.post(URL + "login.html", headers=headers, data=payload)
         if "notLoggedIn" in str(r.url):
             print(r.url)
-            print("Program stopped. Check your details and try again.")
+            print("Login problem. check your nick and password and try again")
             raise SystemExit(0)
+        elif "index.html?act=login" in str(r.url):
+            print("Logged succesfully")
         data.update({server: requests.utils.dict_from_cookiejar(session.cookies)})
         write_json(data, cookies_file_name)
 
