@@ -1,9 +1,6 @@
-if __name__ == "__main__":
-    from supply import supply
-else:
-    from .supply import supply
-
+from supply import supply
 from login import login
+
 from lxml.html import fromstring
 
 def send_motivates(server, Type="all", session=""):
@@ -74,9 +71,10 @@ def send_motivates(server, Type="all", session=""):
                 birthday = int(
                     tree.xpath("//*[@id='profileTable']//tr//td[1]//div[3]//div[9]//span[1]/text()")[0].split()[1])
             if today - birthday > 3:
-                break  # checked all new players
+                print("Checked all new players")
+                break
             if tree.xpath('//*[@id="motivateCitizenButton"]'):
-                for num in range(1, 4):  # all 3 types
+                for num in storage:
                     payload = {'type': num, "submit": "Motivate", "id": citizenId}
                     send = session.post(f"{URL}motivateCitizen.html?id={citizenId}", data=payload)
                     print(send.url)
