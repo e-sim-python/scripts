@@ -28,6 +28,15 @@ def _fix_product_name(product):
     else:
         return Q, item
 
+def _get_staff_list(URL):
+    blacklist = set()
+    i = requests.get(f"{URL}staff.html")
+    tree = fromstring(i.content)
+    nicks = tree.xpath('//*[@id="esim-layout"]//a/text()')
+    for nick in nicks:
+        blacklist.add(nick.strip())
+    return blacklist
+
 def _get_battle_id(server, battle_id, session):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
