@@ -1,9 +1,6 @@
-if __name__ == "__main__":
-    from _bot_functions import _fix_product_name
-else:
-    from ._bot_functions import _fix_product_name
-    
+from _bot_functions import _fix_product_name
 from login import login
+
 from lxml.html import fromstring
 
 
