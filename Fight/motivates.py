@@ -62,7 +62,8 @@ def send_motivates(server, Type="all", session=""):
             tree = fromstring(profile.content)
             current_food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
             if current_food - start_food == 5:
-                break  # sent 5 motivates
+                print("You have sent too many motivates today!")
+                break
             today = int(tree.xpath('//*[@id="userMenu"]/div/div[1]/div/b[3]/text()')[0].split()[1])
             try:
                 birthday = int(
@@ -73,12 +74,13 @@ def send_motivates(server, Type="all", session=""):
             if today - birthday > 3:
                 print("Checked all new players")
                 break
+            print("Checking", profile.url)
             if tree.xpath('//*[@id="motivateCitizenButton"]'):
                 for num in storage:
                     payload = {'type': num, "submit": "Motivate", "id": citizenId}
                     send = session.post(f"{URL}motivateCitizen.html?id={citizenId}", data=payload)
-                    print(send.url)
                     if "&actionStatus=SUCCESFULLY_MOTIVATED" in str(send.url):
+                        print(send.url)
                         break
             citizenId -= 1
         except Exception as error:
