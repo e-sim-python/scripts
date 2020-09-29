@@ -1,4 +1,5 @@
 from login import login, double_click
+
 from lxml.html import fromstring
 
 def job(server, session=""):

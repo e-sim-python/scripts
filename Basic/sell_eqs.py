@@ -1,8 +1,6 @@
+import __init__
 from login import login
-if __name__ == "__main__":
-    from wear_unwear import wear_unwear
-else:
-    from .wear_unwear import wear_unwear
+from Basic.wear_unwear import wear_unwear
 
 def sell_eqs(server, ids, price, hours, session=""):
     """Sell specific EQ ID(s) & reshuffle & upgrade  at auctions."""

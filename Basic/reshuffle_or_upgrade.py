@@ -1,4 +1,5 @@
 from login import login
+
 from lxml.html import fromstring
 
 def reshuffle_or_upgrade(server, action, eq_id_or_link, parameter, session=""):

@@ -2,7 +2,6 @@ from login import login
 
 from lxml.html import fromstring
 
-
 def read(server, session=""):
     """Reading all new msgs and notifications + accept friend requests"""
     URL = f"https://{server}.e-sim.org/"
