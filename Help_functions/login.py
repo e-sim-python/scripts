@@ -58,6 +58,7 @@ def define_login_details(nick="", password="", server=""):
 def get_nick_and_pw(server):
     nick, password = "", ""
     file_name = '../Help_functions/login_details.csv'
+    all_nicks = {}
     while 1:
         if os.path.isfile(file_name):
             with open(file_name, 'r') as file:
@@ -65,11 +66,17 @@ def get_nick_and_pw(server):
                 for row in reader:
                     if row[0] == server:
                         nick, password = row[1], row[2]
-                        break
+                        if server == "all":
+                            all_nicks[row[0]] = row[1]
+                        else:
+                            break
         else:
             define_login_details(server=server)
         if nick and password:
-            return nick, password
+            if server == "all":
+                return all_nicks
+            else:
+                return nick, password
         else:
             define_login_details(server=server)
 
