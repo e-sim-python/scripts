@@ -8,6 +8,7 @@
 - Dump all limits with a single click.
 - Complete all the missions with a single click.
 - Auto-hunt BHs
+- Discord bot (control each of your trusted group accounts via commands)
 - And much more!
 
 (As far as we know, no one has ever been punished for using those scripts. However, the use is at your own risk, of course.)
@@ -21,7 +22,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 - Download the e-sim library as a zip file ([Code -> download ZIP](https://github.com/e-sim-python/scripts/archive/master.zip)) and extract it. (If you can't extract, [download WinRAR](https://www.rarlab.com/) first)
 - At the first run, you will have to excute [install_packets.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py), or install `requests` and `lxml` manually (type `pip install requests` on your start menu, or `py -m pip install requests` on your CMD).
 - Double click (in your computer) on any script you want, or right click -> open with IDLE.
-- Alternative (advanced): import the function to another script. If you need help, execute `print (function_name.__doc__)`
+- Alternative (advanced): import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/bot.py)). If you need help, execute `print (function_name.__doc__)`
 
 ### Few notes:
 - You can edit the scripts by right click on it -> edit with IDLE, or click "Fork" at the top of this page.
@@ -34,17 +35,8 @@ The uploaded scripts (Basic folder mainly) are mostly raw, and they can be used 
 - Add `time.sleep(time_in_sconds)` at the beginning of the script to do action with a delay (For example: Bid auctions just before it's end, propose a law while you are sleeping etc.)
 
 **Advanced idea:**
-- Make a discord bot with your trusted group, and let everyone do specific actions in each other accounts (fight, vote laws etc.).
+- Run the [discord bot](https://github.com/e-sim-python/scripts/blob/master/bot.py) in each of your trusted group devices, and let everyone do specific actions in each other accounts (fight, vote laws etc.).
 - Alternative, you can do that with multies and VPS ;)
-- You can also replace every `server` parameter with `ctx` in all the function, and add line like `server = ctx.channel.name` (open channel for each server).
-
-**Advanced example:**
-```
-MY_NICK = "Admin"
-def fight(nick, *other_args):
-  if nick == MY_NICK:
-    #rest of the code
-```
 
 ### Errors:
 - First try to search for solution online.
