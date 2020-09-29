@@ -14,7 +14,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
     if "t" in startTime.lower():
         startTime = float(startTime.lower().replace("t", "")) * 60
     maxDmgForBh, startTime = int(maxDmgForBh.replace("k", "000")), int(startTime)
-    print(f"Start hunting at {server}.")
+    print(f"Startint to hunt at {server}.")
     nick = get_nick_and_pw(server)[0]
     apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
     while 1:
@@ -30,7 +30,12 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
             apiBattles = requests.get(f'{URL}apiBattles.html?battleId={battle_id}').json()[0]
             if apiBattles['frozen']:
                 continue
-            time.sleep(apiBattles["hoursRemaining"]*3600 + apiBattles["minutesRemaining"]*60 + apiBattles["secondsRemaining"] - startTime)
+            time_to_sleep = apiBattles["hoursRemaining"]*3600 + apiBattles["minutesRemaining"]*60 + apiBattles["secondsRemaining"]
+            print("Seconds till next battle:", time_to_sleep)
+            try:
+                time.sleep(time_to_sleep - startTime)
+            except:
+                pass
             apiFights = requests.get(f'{URL}apiFights.html?battleId={battle_id}&roundId={apiBattles["currentRound"]}').json()
             defender, attacker = {}, {}
             for hit in apiFights:
@@ -86,7 +91,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                 except:
                     sideName, sideDMG = "None", 0
                 battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
-                # condition - You are top 1 / did more dmg than your limit / refresh problem
+                # condition - You are top 1 / did more dmg than your limit / refresh problem                
                 condition = (sideName == nick or
                              DamageDone > maxDmgForBh or
                              DamageDone > sideDMG)
@@ -98,11 +103,14 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                     else:
                         return True
                 else:
-                    if sideDMG < maxDmgForBh or condition:
+                    if sideDMG < maxDmgForBh and condition:
                         food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
                         use = "eat" if food else "gift"
                         session.post(f"{URL}{use}.html", data={'quality': 5})
-                        time.sleep(battleScore["remainingTimeInSeconds"] - 13)
+                        try:
+                            time.sleep(battleScore["remainingTimeInSeconds"] - 13)
+                        except:
+                            pass
                         battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
                         if battleScore[f"{side.lower()}sOnline"]:
                             fight(side, DamageDone, session)
@@ -136,26 +144,22 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                             print("I couldn't find the bonus region")
                             continue
                         side = "attacker"
-                        side_dmg = aDMG
-                        hunting(side, side_dmg, session)
+                        hunting(side, aDMG, session)
 
                     if dDMG < maxDmgForBh:
                         fly(server, apiBattles['regionId'], session=session)
                         side = "defender"
-                        side_dmg = dDMG
-                        hunting(side, side_dmg, session)
+                        hunting(side, dDMG, session)
 
                 elif apiBattles['type'] == "RESISTANCE":
                     fly(server, apiBattles['regionId'], session=session)
                     if aDMG < maxDmgForBh:
                         side = "attacker"
-                        side_dmg = aDMG
-                        hunting(side, side_dmg, session)
+                        hunting(side, aDMG, session)
 
                     if dDMG < maxDmgForBh:
                         side = "defender"
-                        side_dmg = dDMG
-                        hunting(side, side_dmg, session)
+                        hunting(side, dDMG, session)
                 else:
                     continue
 
