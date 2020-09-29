@@ -1,5 +1,2 @@
-from sys import path
-from os.path import dirname
-
-path.append(dirname(path[0]))
+import __init__
 from Help_functions.login import *

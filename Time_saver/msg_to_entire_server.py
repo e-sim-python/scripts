@@ -1,5 +1,6 @@
 from login import login
-from _bot_functions import _get_staff_list
+import __init__
+from Help_functions._bot_functions import _get_staff_list
 
 from lxml.html import fromstring
 import time

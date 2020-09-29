@@ -1,8 +1,6 @@
 from login import login
-if __name__ == "__main__":
-    from _bot_functions import _prices_helper, _converting_raw_price_to_float, _update_auctions_prices_from_csv
-else:
-    from ._bot_functions import _prices_helper, _converting_raw_price_to_float, _update_auctions_prices_from_csv
+import __init__
+from Help_functions._bot_functions import _prices_helper, _converting_raw_price_to_float, _update_auctions_prices_from_csv
 
 from random import randint
 import time

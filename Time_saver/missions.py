@@ -1,20 +1,14 @@
-if __name__ == "__main__":
-    from sys import path
-    from os.path import dirname
-    path.append(dirname(path[0]))
+import __init__
     
-    from Basic.fly import fly
-    from Basic.job import job
-    from Basic.sell_eqs import sell_eqs
-    from Basic.send_application import citizenship_or_mu_application
+from Basic.fly import fly
+from Basic.job import job
+from Basic.sell_eqs import sell_eqs
+from Basic.send_application import citizenship_or_mu_application
 
-    from Fight.auto_fight import auto_fight
-    from Fight.motivates import send_motivates
+from Fight.auto_fight import auto_fight
+from Fight.motivates import send_motivates
 
-    from add_friends import friends
-
-else:
-    from .add_friends import friends
+from Time_saver.add_friends import friends
 from login import login, double_click
 
 import time

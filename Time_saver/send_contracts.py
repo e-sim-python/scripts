@@ -1,5 +1,6 @@
 from login import login, get_nick_and_pw
-from _bot_functions import _get_staff_list
+import __init__
+from Help_functions._bot_functions import _get_staff_list
 
 import requests  
 from lxml.html import fromstring

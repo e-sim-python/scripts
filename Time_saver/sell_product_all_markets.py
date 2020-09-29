@@ -1,9 +1,7 @@
 from login import login
-if __name__ == "__main__":
-    from _bot_functions import _fix_product_name
-else:
-    from ._bot_functions import _fix_product_name
-    
+import __init__
+from Help_functions._bot_functions import _fix_product_name
+
 import time
 from random import randint
 
