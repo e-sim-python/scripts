@@ -58,7 +58,7 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
     Damage = 0
     hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
     Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
-    for _ in range(1, food + gift):
+    while 1:
         if time.time() - start > int(start_time):
             break  # round is over        
 
@@ -77,23 +77,21 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
                 use = "eat"
                 food -= 1
             session.post(f"{URL}{use}.html", data={'quality': 5})
-            Health += 50
         for _ in range(5):
             try:
                 post_hit = session.post(
                     f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}&value=Berserk")
-                print(post_hit.url)
                 tree = fromstring(post_hit.content)
                 Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
-                Health -= 50
+                Health = float(tree.xpath("//*[@id='healthUpdate']")[0].text.split()[0])
                 if dmg < 1000:
                     Damage = 5  # Berserk
                 update += 1
                 break
             except:
                 # "Slow down"
-                delete = tree.xpath('//img/@src')[0]
-                if "delete.png" in delete:
+                delete = tree.xpath('//img/@src')
+                if delete and "delete.png" in delete[0]:
                     break
                 print("Slow down")
                 time.sleep(2)
@@ -101,7 +99,7 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
         hits_or_dmg = "hits" if dmg < 1000 else "dmg"
         if update % 4 == 0:
             # dmg update every 4 berserks.
-            print(f"{hits_or_dmg.title()} done: {DamageDone}")
+            print(f"{hits_or_dmg.title()} done so far: {DamageDone}")
         if DamageDone >= dmg:
             print(f"Done {DamageDone} {hits_or_dmg}")
             break
