@@ -34,5 +34,6 @@ if __name__ == "__main__":
     auction_id = input("Auction id: ")
     price = input("Your bid: ")
     delay = input("Bid near auctions end? (y/n): ")
+    delay = True if delay.lower() == "y" else False
     bid_specific_auction(server, auction_id, price, delay=False if delay == "n" else True)
     input("Press any key to continue")

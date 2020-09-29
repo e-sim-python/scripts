@@ -1,5 +1,6 @@
+import __init__
 from login import login
-from fly import fly
+from Basic.fly import fly
 
 def rw(server, region_id, ticket_quality="5", session=""):
     """
