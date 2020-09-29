@@ -41,6 +41,19 @@ def define_login_details(nick="", password="", server=""):
                     password = new_password
                 writer.writerow([server, nick, password])
 
+    cookies_file_name = '../Help_functions/cookies.txt'
+    if not os.path.isfile(cookies_file_name):
+        write_json({}, cookies_file_name)
+    with open(cookies_file_name, 'r') as file:
+        data = json.load(file)
+        try:
+            user_agent = data["user_agent"]
+        except:
+            print("Go to this site - https://www.whatsmyua.info/ , copy your user-agent and paste here")
+            user_agent = input(
+                "It will tell e-sim that you browsing through your regular browser, so make sure there are no mistakes\n")
+            data.update({"user_agent": user_agent})
+            write_json(data, cookies_file_name)
 
 def get_nick_and_pw(server):
     nick, password = "", ""
@@ -71,18 +84,9 @@ def login(server):
     define_login_details()
     URL = f"https://{server}.e-sim.org/"
     cookies_file_name = '../Help_functions/cookies.txt'
-    if not os.path.isfile(cookies_file_name):
-        write_json({}, cookies_file_name)
     with open(cookies_file_name, 'r') as file:
         data = json.load(file)
-        try:
-            user_agent = data["user_agent"]
-        except:
-            print("Go to this site - https://www.whatsmyua.info/ , copy your user-agent and paste here")
-            user_agent = input(
-                "It will tell e-sim that you browsing through your regular browser, so make sure there are no mistakes\n")
-            data.update({"user_agent": user_agent})
-            write_json(data, cookies_file_name)
+        user_agent = data["user_agent"]
 
     headers = {"User-Agent": user_agent, "Referer": f"{URL}index.html"}
     session = requests.session()    
@@ -124,12 +128,24 @@ def double_click(server, queue="", session=""):
         payload2 = {'task': "TRAIN", "action": "put", "submit": "Add plan"}
         session.post(URL + "taskQueue.html", data=payload1)
         session.post(URL + "taskQueue.html", data=payload2)
-
-    session.post(URL + "train/ajax?action=train")
-    print("Trained successfully at", server)
-    session.post(URL + "work/ajax?action=work")
-    print("Worked at", server)
-    time.sleep(3)  # some delay
+        
+    home = session.get(URL)
+    tree = fromstring(home.content)
+    check = tree.xpath('//*[@id="taskButtonWork"]//@href')
+    if check:
+        region = tree.xpath('//div[1]//div[2]//div[5]//div[1]//div//div[1]//div//div[4]//a/@href')[0].split("=")[1]    
+        payload = {'countryId': int(int(region) / 6) + (int(region) % 6 > 0), 'regionId': region, 'ticketQuality': 5}    
+        session.post(URL + "travel.html", data=payload)
+        session.post(URL + "train/ajax?action=train")
+        print("Trained successfully at", server)
+        work_link = session.post(URL + "work/ajax?action=work")
+        tree = fromstring(work_link.content)
+        check = tree.xpath('//*[@id="taskButtonWork"]//@href')
+        if not check:
+            print("Worked successfully at", server)
+        else:
+            print("Couldn't work")
+        time.sleep(3)  # some delay
 
 
 if __name__ == "__main__":
