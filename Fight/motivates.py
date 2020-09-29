@@ -1,4 +1,5 @@
-from supply import supply
+import __init__
+from Fight.supply import supply
 from login import login
 
 from lxml.html import fromstring

@@ -1,8 +1,6 @@
 from login import login
-if __name__ == "__main__":
-    from fly import fly
-else:
-    from .fly import fly
+import __init__
+from Basic.fly import fly
 
 import requests
 from lxml.html import fromstring

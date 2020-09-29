@@ -1,4 +1,5 @@
-from _bot_functions import _fix_product_name
+import __init__
+from Help_functions._bot_functions import _fix_product_name
 from login import login
 
 from lxml.html import fromstring

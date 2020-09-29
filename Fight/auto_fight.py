@@ -1,8 +1,7 @@
 from login import login, double_click
-if __name__ == "__main__":
-    from _bot_functions import _fighting, _random_sleep, _get_battle_id
-else:
-    from ._bot_functions import _fighting, _random_sleep, _get_battle_id
+import __init__
+from Help_functions._bot_functions import _fighting, _random_sleep, _get_battle_id
+
 
 from random import randint
 import requests
