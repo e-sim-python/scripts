@@ -3,7 +3,7 @@ import os
 import requests
 import json
 import time
-
+from lxml.html import fromstring
 
 def write_json(data, filename):
     with open(filename, 'w') as f:
@@ -98,12 +98,8 @@ def login(server):
         online_check = "notLoggedIn" in str(online_check.url)
     if online_check or server not in data:
         nick, password = get_nick_and_pw(server)
-        try:
-            payload = {'login': nick, 'password': password, 'remember': True}
-        except:
-            define_login_details()
-            payload = {'login': nick, 'password': password, 'remember': True}
-        
+        payload = {'login': nick, 'password': password, 'remember': True}
+
         session.get(URL, headers=headers)
         r = session.post(URL + "login.html", headers=headers, data=payload)
         if "notLoggedIn" in str(r.url):
