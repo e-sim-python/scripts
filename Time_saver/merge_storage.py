@@ -1,7 +1,6 @@
 from login import login
 
 import time
-
 from lxml.html import fromstring
 
 def merge(server, ids, session=""):
@@ -40,7 +39,7 @@ def merge(server, ids, session=""):
                         DICT[Q] = []
                     DICT[Q].append(int(ID.replace("#", "")))
             for i in range(1, max_q_to_merge + 1):
-                if len(DICT[i]) > 2:
+                if i in DICT and len(DICT[i]) > 2:
                     for z in range(int(len(DICT[i]) / 3)):
                         EQ1, EQ2, EQ3 = DICT[i][z*3:z*3 + 3]
                         payload = {'action': "MERGE", f'itemId[{EQ1}]': EQ1, f'itemId[{EQ2}]': EQ2,
