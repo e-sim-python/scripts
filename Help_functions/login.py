@@ -104,7 +104,7 @@ def login(server):
     if server in data:
         old_cookies = requests.utils.cookiejar_from_dict(data[server])
         session.cookies.update(old_cookies)
-        online_check = session.get(URL + "storage.html", headers=headers)
+        online_check = session.get(URL + "storage.html")
         online_check = "notLoggedIn" in str(online_check.url)
     if online_check or server not in data:
         nick, password = get_nick_and_pw(server)
@@ -135,12 +135,15 @@ def double_click(server, queue="", session=""):
         session.post(URL + "taskQueue.html", data=payload1)
         session.post(URL + "taskQueue.html", data=payload2)
         
-    home = session.get(URL)
-    tree = fromstring(home.content)
+    work_page = session.get(URL + "work.html")
+    tree = fromstring(work_page.content)
     check = tree.xpath('//*[@id="taskButtonWork"]//@href')
     if check:
-        region = tree.xpath('//div[1]//div[2]//div[5]//div[1]//div//div[1]//div//div[4]//a/@href')[0].split("=")[1]    
-        payload = {'countryId': int(int(region) / 6) + (int(region) % 6 > 0), 'regionId': region, 'ticketQuality': 5}    
+        try:
+            region = tree.xpath('//div[1]//div[2]//div[5]//div[1]//div//div[1]//div//div[4]//a/@href')[0].split("=")[1] 
+            payload = {'countryId': int(int(region) / 6) + (int(region) % 6 > 0), 'regionId': region, 'ticketQuality': 5}   
+        except:
+            print("I couldn't find in which region your work is. Maybe you don't have a job")
         session.post(URL + "travel.html", data=payload)
         session.post(URL + "train/ajax?action=train")
         print("Trained successfully at", server)
@@ -151,6 +154,8 @@ def double_click(server, queue="", session=""):
             print("Worked successfully at", server)
         else:
             print("Couldn't work")
+    else:
+        print("Already worked")
     return session
 
 if __name__ == "__main__":
