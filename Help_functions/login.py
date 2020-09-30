@@ -1,9 +1,11 @@
 import csv
-import os
+from os import path
 import requests
 import json
 import time
 from lxml.html import fromstring
+
+dir = path.dirname(__file__)
 
 def write_json(data, filename):
     with open(filename, 'w') as f:
@@ -12,15 +14,14 @@ def write_json(data, filename):
 
 def define_login_details(nick="", password="", server=""):
     """Saving nicks, passwords for each server from the user, for later use."""
-    file_name = '../Help_functions/login_details.csv'
+    file_name = path.join(dir, 'login_details.csv')
     if nick and password and server:
         with open(file_name, 'a', newline='') as csvFile:
             writer = csv.writer(csvFile)
-            if not os.path.isfile(file_name):
+            if not path.isfile(file_name):
                 writer.writerow(["Server", "Nick", "Password"])
             writer.writerow([server, nick, password])
-
-    if not os.path.isfile(file_name) or server:
+    if not path.isfile(file_name) or (server and server != "all"):
         with open(file_name, 'a', newline='') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(["Server", "Nick", "Password"])
@@ -41,8 +42,8 @@ def define_login_details(nick="", password="", server=""):
                     password = new_password
                 writer.writerow([server, nick, password])
 
-    cookies_file_name = '../Help_functions/cookies.txt'
-    if not os.path.isfile(cookies_file_name):
+    cookies_file_name = path.join(dir, 'cookies.txt')
+    if not path.isfile(cookies_file_name):
         write_json({}, cookies_file_name)
     with open(cookies_file_name, 'r') as file:
         data = json.load(file)
@@ -57,22 +58,24 @@ def define_login_details(nick="", password="", server=""):
 
 def get_nick_and_pw(server):
     nick, password = "", ""
-    file_name = '../Help_functions/login_details.csv'
+    file_name = path.join(dir, 'login_details.csv')
     all_nicks = {}
     while 1:
-        if os.path.isfile(file_name):
+        if path.isfile(file_name):
             with open(file_name, 'r') as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    if row[0] == server:
+                    if row[0] == server or server == "all":
                         nick, password = row[1], row[2]
                         if server == "all":
-                            all_nicks[row[0]] = row[1]
+                            if row[0].lower() != "server":
+                                all_nicks[row[0]] = row[1]
                         else:
                             break
         else:
             define_login_details(server=server)
-        if nick and password:
+
+        if nick and password or all_nicks:
             if server == "all":
                 return all_nicks
             else:
@@ -90,7 +93,7 @@ def login(server):
     """
     define_login_details()
     URL = f"https://{server}.e-sim.org/"
-    cookies_file_name = '../Help_functions/cookies.txt'
+    cookies_file_name = path.join(dir, 'cookies.txt')
     with open(cookies_file_name, 'r') as file:
         data = json.load(file)
         user_agent = data["user_agent"]
@@ -162,7 +165,7 @@ if __name__ == "__main__":
         for server in servers:
             double_click(server.strip())
     else:
-        with open('../Help_functions/login_details.csv', 'r') as file:
+        with open(path.join(dir, 'login_details.csv'), 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 if row[0] != "Server":
