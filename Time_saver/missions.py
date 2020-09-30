@@ -117,15 +117,12 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     fly(server, capital, 3, session=session)
                 elif num in (13, 66):
                     session.get(URL + 'friends.html?action=PROPOSE&id=8')
-                    citizenAchievements = session.get(URL + "citizenAchievements.html")
-                    tree = fromstring(citizenAchievements.content)
-                    ID = str(tree.xpath('//*[@id="userName"]/@href')[0]).split("=")[1]
                     session.post(URL + "citizenAchievements.html",
-                                       data={"id": ID, "submit": "Recalculate achievements"})
+                                       data={"id": my_id, "submit": "Recalculate achievements"})
                 elif num == 14:
                     i = session.get(URL + 'storage.html?storageType=EQUIPMENT')
                     tree = fromstring(i.content)
-                    ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0]
+                    ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0].replace("#", "")
                     payload = {'action': "EQUIP", 'itemId': ID.replace("#", "")}
                     session.post(URL + "equipmentAction.html", data=payload)
                 elif num == 15:
