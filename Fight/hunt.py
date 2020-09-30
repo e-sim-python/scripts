@@ -8,6 +8,7 @@ import time
 
 def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
     """Auto hunt BHs (attack and RWs)"""
+    dead_servers = ["primera", "secura", "suna"]
     URL = f"https://{server}.e-sim.org/"
     if "t" in startTime.lower():
         startTime = float(startTime.lower().replace("t", "")) * 60
@@ -57,14 +58,17 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                 tree = fromstring(battle.content)
                 Health = int(float(str(tree.xpath("//*[@id='actualHealth']")[0].text)))
                 hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-                food = tree.xpath('//*[@id="foodLimit2"]')[0].text
-                gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
+                food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
+                gift = int(tree.xpath('//*[@id="giftLimit2"]')[0].text)
                 if Health < 50:
-                    use = "eat" if int(food) else "gift"
+                    use = "eat" if food else "gift"
                     session.post(f"{URL}{use}.html", data={'quality': 5})
                 battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
                 Damage = 0
-                value = "&value=Berserk" if battleScore["spectatorsOnline"] != 1 and Health >= 50 else ""
+                if server in dead_servers:
+                    value = "&value=Berserk" if battleScore["spectatorsOnline"] != 1 and Health >= 50 else ""
+                else:
+                    value = "&value=Berserk"
                 for _ in range(5):
                     try:
                         f = session.post(f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}{value}")
@@ -78,7 +82,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                     DamageDone += Damage
                 except:
                     print("Couldn't hit")
-                if not int(food) and not int(gift) and not Health:
+                if not food and not gift and not Health:
                     print("done limits")
                     DamageDone = 0
                 return DamageDone
@@ -89,24 +93,24 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                 hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
 
                 try:
-                    sideName = tree.xpath(f"//*[@id='top{side}1']//div//a[1]/text()")[0].strip()
-                    sideDMG = int(str(tree.xpath(f'//*[@id="top{side}1"]/div/div[2]')[0].text).replace(",", ""))
+                    top1Name = tree.xpath(f"//*[@id='top{side}1']//div//a[1]/text()")[0].strip()
+                    top1dmg = int(str(tree.xpath(f'//*[@id="top{side}1"]/div/div[2]')[0].text).replace(",", ""))
                 except:
-                    sideName, sideDMG = "None", 0
+                    top1Name, top1dmg = "None", 0
                 battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
                 # condition - You are top 1 / did more dmg than your limit / refresh problem                
-                condition = (sideName == nick or
+                condition = (top1Name == nick or
                              DamageDone > maxDmgForBh or
-                             DamageDone > sideDMG)
+                             DamageDone > top1dmg)
                 if battleScore["remainingTimeInSeconds"] > startTime:
                     return False
                 elif battleScore['spectatorsOnline'] == 1:
-                    if sideDMG > maxDmgForBh or condition:
+                    if top1dmg > maxDmgForBh or condition:
                         return False
                     else:
                         return True
                 else:
-                    if sideDMG < maxDmgForBh and condition:
+                    if top1dmg < maxDmgForBh and condition:
                         food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
                         use = "eat" if food else "gift"
                         session.post(f"{URL}{use}.html", data={'quality': 5})
@@ -147,27 +151,25 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         except:
                             print("I couldn't find the bonus region")
                             continue
-                        side = "attacker"
-                        hunting(side, aDMG, session)
+                        hunting("attacker", aDMG, session)
 
                     if dDMG < maxDmgForBh:
                         fly(server, apiBattles['regionId'], session=session)
-                        side = "defender"
-                        hunting(side, dDMG, session)
+                        hunting("defender", dDMG, session)
 
                 elif apiBattles['type'] == "RESISTANCE":
                     fly(server, apiBattles['regionId'], session=session)
                     if aDMG < maxDmgForBh:
-                        side = "attacker"
-                        hunting(side, aDMG, session)
+                        hunting("attacker", aDMG, session)
 
                     if dDMG < maxDmgForBh:
-                        side = "defender"
-                        hunting(side, dDMG, session)
+                        hunting("defender", dDMG, session)
                 else:
                     continue
       except Exception as error:
           print(error)
+
+
 if __name__ == "__main__":
     print(hunt.__doc__)
     server = input("Server: ")
