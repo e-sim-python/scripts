@@ -24,7 +24,7 @@ def register(server, nick, password, lan, countryId):
         return "Could not register"
     define_login_details(nick, password, server)
     login(server)  # save cookies
-    print("We recommend avatar avatar and job functions next")
+    print("We recommend using avatar and job functions next")
     print(registration.url)
     return session
 
