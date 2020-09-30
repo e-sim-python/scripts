@@ -466,5 +466,23 @@ async def on_message(message):
             await ctx.send(output[:2000])
         f.close()
 
+@bot.event
+async def on_command_error(ctx, error):
+    if hasattr(ctx.command, 'on_error'):
+        return
+    error = getattr(error, 'original', error)
+    if isinstance(error, commands.NoPrivateMessage):
+        await ctx.send("Sorry, you can't use this command in a private message!")
+        return
+    if isinstance(error, commands.CommandNotFound):
+        return
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(error,delete_after=5)
+        return
+    last_msg = str(list(await ctx.channel.history(limit=1).flatten())[0].content)
+    error_msg = f'```{error}```'
+    if error_msg != last_msg:
+        # Don't send from all users.
+        await ctx.send(error_msg)
         
 bot.run(YOUR_SECRET_TOKEN)
