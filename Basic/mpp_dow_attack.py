@@ -3,7 +3,7 @@ from login import login
 import requests
 import time
 
-def mpp_dow_attack(server, ID, action, delay_or_battle_link):
+def mpp_dow_attack(server, ID, action, delay_or_battle_link=""):
     """
     Propose MPP / Declaration of war / Attack region.
     Possible after certain delay / after certain battle."""
