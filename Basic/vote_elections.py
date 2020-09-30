@@ -26,7 +26,7 @@ def elect(server, your_candidate, session=""):
         link = "congressElections.html"
     else:
         print("There are not elections today")
-        return
+        return session
 
     if not session:
         session = login(server)
