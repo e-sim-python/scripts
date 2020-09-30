@@ -151,8 +151,7 @@ def double_click(server, queue="", session=""):
             print("Worked successfully at", server)
         else:
             print("Couldn't work")
-        time.sleep(3)  # some delay
-
+    return session
 
 if __name__ == "__main__":
     print(define_login_details.__doc__)
