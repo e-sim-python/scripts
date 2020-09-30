@@ -60,7 +60,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                 food = tree.xpath('//*[@id="foodLimit2"]')[0].text
                 gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
                 if Health < 50:
-                    use = "eat" if food else "gift"
+                    use = "eat" if int(food) else "gift"
                     session.post(f"{URL}{use}.html", data={'quality': 5})
                 battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
                 Damage = 0
