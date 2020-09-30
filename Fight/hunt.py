@@ -30,7 +30,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
             if apiBattles['frozen']:
                 continue
             time_to_sleep = apiBattles["hoursRemaining"]*3600 + apiBattles["minutesRemaining"]*60 + apiBattles["secondsRemaining"]
-            round_time = 7000 is server in ("primera", "secura", "suna") else 3400
+            round_time = 7000 if server in ("primera", "secura", "suna") else 3400
             if time_to_sleep > 7000:
                 break
             print("Seconds till next battle:", time_to_sleep)
