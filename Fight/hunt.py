@@ -16,6 +16,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
     nick = get_nick_and_pw(server)[0]
     apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
     while 1:
+      try:
         battles_time = {}
         apiMap = requests.get(f'{URL}apiMap.html').json()
         for row in apiMap:
@@ -29,6 +30,9 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
             if apiBattles['frozen']:
                 continue
             time_to_sleep = apiBattles["hoursRemaining"]*3600 + apiBattles["minutesRemaining"]*60 + apiBattles["secondsRemaining"]
+            round_time = 7000 is server in ("primera", "secura", "suna") else 3400
+            if time_to_sleep > 7000:
+                break
             print("Seconds till next battle:", time_to_sleep)
             try:
                 time.sleep(time_to_sleep - startTime)
@@ -66,6 +70,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         f = session.post(f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}{value}")
                         tree = fromstring(f.content)
                         Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
+                        time.sleep(0.3)
                         break
                     except:
                         time.sleep(2)
@@ -161,7 +166,8 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         hunting(side, dDMG, session)
                 else:
                     continue
-
+      except Exception as error:
+          print(error)
 if __name__ == "__main__":
     print(hunt.__doc__)
     server = input("Server: ")
