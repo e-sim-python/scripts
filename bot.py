@@ -36,6 +36,16 @@ def add_docs_for(other_func):
         return func
     return dec
 
+
+@bot.command(aliases=["w", "work+"])
+async def work(ctx, *, nick):
+    """`work+` -> for premium users"""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        session = sessions[server]
+        queue == "+" if ctx.invoked_with.lower() == "work+" else ""
+        sessions[server] = login.double_click(server, queue, session)
+        
 @bot.command()
 @add_docs_for(accept_contract.accept_contract)
 async def accept(ctx, contract_id, *, nick):
@@ -452,7 +462,14 @@ async def Login(ctx, *, nick):
         session = sessions[server]
         sessions[server] = login.login(server, session)
 
-
+@bot.command()
+async def shutdown(ctx, *, nick):
+    """Shuting down specific nick (in case of ban or something)
+    Warning: It shuting down from all servers."""
+    if nick.lower() == MY_NICKS[server].lower():
+        await ctx.send(f"**{nick}** shutted down")
+        sys.exit(1)
+        
 @bot.event                                          
 async def on_message(message):
     ctx = await bot.get_context(message)
