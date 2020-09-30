@@ -324,7 +324,133 @@ async def wear(ctx, ids, *, nick):
     server = ctx.channel.name
     if nick.lower() == MY_NICKS[server].lower():
         session = sessions[server]
-        sessions[server] = wear_unwear.wear_unwear(server, ids, session)
+        action = "-" if ctx.invoked_with.lower() == "unwear" else "+"
+        sessions[server] = wear_unwear.wear_unwear(server, ids, action, session)
+
+@bot.command()
+@add_docs_for(auto_fight.auto_fight)
+async def add(ctx, nick, restores="100", battle_id="", side="attacker", wep="0", food="", gift=""):
+    """
+    If `nick` containing more than 1 word - it must be within quotes.
+    If you want to skip a parameter, you should write the default value.
+    Example: `.add "My Nick" 100 "" attacker 0 5` - skip `battle_id` in order to change `food`"""
+    # Idea: control all those parameters via google spreadsheets or something (read the data with python).
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        if side.lower() not in ("attacker", "defender"):
+            await ctx.send(f"'side' parameter must be attacker/defender only (not {side})")
+        auto_fight.auto_fight(server, battle_id, side, wep, food, gift, restores)
+
+@bot.command()
+@add_docs_for(fight.fight)
+async def Fight(ctx, nick, link, side, weaponQuality="5", dmg_or_hits="100kk", ticketQuality="5"):
+    """
+    If `nick` containing more than 1 word - it must be within quotes.
+    If you want to skip a parameter, you should write the default value.
+    Example: `.fight "My Nick" 100 "" attacker 0 5` - skip `battle_id` in order to change `food`"""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        link = link if link.startswith("http") else f"https://{server}.e-sim.org/battle.html?id={link}"
+        session = sessions[server]
+        sessions[server] = fight.fight(link, side, weaponQuality, dmg_or_hits, ticketQuality, session)
+
+@bot.command()
+@add_docs_for(hunt.hunt)
+async def Hunt(ctx, nick, maxDmgForBh="500000", weaponQuality="5", startTime="60"):
+    """If `nick` containing more than 1 word - it must be within quotes."""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        hunt.hunt(server, maxDmgForBh, startTime, weaponQuality)
+
+@bot.command()
+@add_docs_for(hunt_specific_battle.hunt_specific_battle)
+async def hunt_battle(ctx, nick, link, side="attacker", max_dmg_for_bh="1", weapon_quality="0"):
+    """If `nick` containing more than 1 word - it must be within quotes."""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        link = link if link.startswith("http") else f"https://{server}.e-sim.org/battle.html?id={link}"
+        hunt_specific_battle.hunt_specific_battle(link, side, max_dmg_for_bh, weapon_quality)
+
+@bot.command()
+@add_docs_for(motivates.send_motivates)
+async def motivate(ctx, *, nick):
+    """
+    If you want to send motivates with specific type only, write in this format:
+    .motivate My Nick, wep"""
+    if "," in nick:
+        nick, Type = nick.split(",")
+    else:
+        Type = "all"
+    server = ctx.channel.name
+    if nick.strip().lower() == MY_NICKS[server].lower():
+        session = sessions[server]
+        sessions[server] = motivates.send_motivates(server, Type.strip(), session)
+
+@bot.command()
+@add_docs_for(supply.supply)
+async def Supply(ctx, amount, quality, product, *, nick):
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        product = f'{int(quality.lower().replace("Q", ""))} {product}'
+        session = sessions[server]
+        sessions[server] = supply.supply(server, amount, product, session)
+
+@bot.command()
+@add_docs_for(win_battle.watch)
+async def watch(ctx, nick, link, side, start_time="60", keep_wall="3kk", let_overkill="10000000", weaponQuality="5"):
+    """If `nick` containing more than 1 word - it must be within quotes."""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        link = link if link.startswith("http") else f"https://{server}.e-sim.org/battle.html?id={link}"
+        win_battle.watch(link, side, start_time, keep_wall, let_overkill, weaponQuality)
+
+@bot.command(aliases=["friends+"])
+@add_docs_for(add_friends.friends)
+async def friends(ctx, *, nick):
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        option = "online" if ctx.invoked_with.lower() == "friends" else "all"
+        session = sessions[server]
+        sessions[server] = add_friends.friends(server, option, session)
+
+@bot.command()
+async def merge(ctx, ids_or_Q, *, nick):
+    """
+    Merge specific EQ IDs / all EQs up to specific Q (included).
+    Examples:
+    .merge 36191,34271,33877 My Nick
+    .merge 5 My Nick
+    IMPORTANT NOTE: No spaces in `ids_or_Q`! only commas.
+    """
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        session = sessions[server]
+        sessions[server] = merge_storage.merge(server, ids_or_Q, session)
+
+@bot.command()
+async def Missions(ctx, *, nick):
+    """Finish all missions."""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        session = sessions[server]
+        missions.missions(server, session=session)
+
+@bot.command()
+@add_docs_for(sell_coins.mm)
+async def mm(ctx, *, nick):
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        session = sessions[server]
+        sessions[server] = sell_coins.mm(server, session)
+
+@bot.command()
+@add_docs_for(login.login)
+async def Login(ctx, *, nick):
+    """Should help you in error cases"""
+    server = ctx.channel.name
+    if nick.lower() == MY_NICKS[server].lower():
+        session = sessions[server]
+        sessions[server] = login.login(server, session)
 
 
 @bot.event                                          
