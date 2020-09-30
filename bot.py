@@ -17,6 +17,10 @@ sessions = defaultdict(lambda: "")
 
 # MY_NICKS = {"secura": "Some Nick",
 #             "suna": "Another Nick"}
+
+# If you have the same nick in all servers:
+# MY_NICKS = defaultdict(lambda: "Your Nick")
+
 MY_NICKS = get_nick_and_pw("all")
 
 
@@ -460,7 +464,7 @@ async def Login(ctx, *, nick):
     server = ctx.channel.name
     if nick.lower() == MY_NICKS[server].lower():
         session = sessions[server]
-        sessions[server] = login.login(server, session)
+        sessions[server] = login.login(server)
 
 @bot.command()
 async def shutdown(ctx, *, nick):
@@ -477,9 +481,23 @@ async def on_message(message):
         f = StringIO()
         with redirect_stdout(f):
             await bot.invoke(ctx)
-        output = f.getvalue()    
-        if output:
+        output = f.getvalue()
+        
+        if "notLoggedIn" in output:
+            f = StringIO()
+            login.login(ctx.channel.name)
+            with redirect_stdout(f):
+                await bot.invoke(ctx)
+            output = f.getvalue()
+            
+        if len(output) > 100 or "http" in output:
+            embed = discord.Embed()
+            embed.add_field(name=os.environ['nick'], value=output[:1000])
+            if output[1000:]:
+                embed.add_field(name="Page 2", value=output[1000:2000])
             # Sending the output (all prints) to your channel.
+            await ctx.send(embed=embed)
+        else:
             await ctx.send(output[:2000])
         f.close()
 
