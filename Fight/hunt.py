@@ -87,7 +87,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                     DamageDone = 0
                 return DamageDone
 
-            def check(side, DamageDone, session):
+            def check(side, DamageDone, should_continue, session):
                 battle = session.get(f'{URL}battle.html?id={battle_id}')
                 tree = fromstring(battle.content)
                 hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
@@ -111,28 +111,29 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         return True
                 else:
                     if top1dmg < maxDmgForBh and condition:
-                        food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
-                        use = "eat" if food else "gift"
-                        session.post(f"{URL}{use}.html", data={'quality': 5})
-                        try:
-                            time.sleep(battleScore["remainingTimeInSeconds"] - 13)
-                        except:
-                            pass
-                        battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
-                        if battleScore[f"{side.lower()}sOnline"]:
-                            fight(side, DamageDone, session)
+                        if not should_continue:
+                            food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
+                            use = "eat" if food else "gift"
+                            session.post(f"{URL}{use}.html", data={'quality': 5})
+                            try:
+                                time.sleep(battleScore["remainingTimeInSeconds"] - 13)
+                            except:
+                                pass
+                            battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
+                            if battleScore[f"{side.lower()}sOnline"]:
+                                fight(side, DamageDone, session)
                         return False
                     return True
 
-            def hunting(side, side_dmg, session):
+            def hunting(side, side_dmg, should_continue, session):
                 DamageDone = 0
-                c = check(side.title(), DamageDone, session)
+                c = check(side.title(), DamageDone, should_continue,session)
                 while c:
                     DamageDone = fight(side, DamageDone, session)
                     if not DamageDone:  # Done limits or error
                         break
                     if DamageDone > side_dmg:
-                        c = check(side.title(), DamageDone, session)
+                        c = check(side.title(), DamageDone, should_continue, session)
             try:
                 aDMG = sorted(attacker.items(), key=lambda x: x[1], reverse=True)[0][1]
             except:
@@ -151,25 +152,23 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         except:
                             print("I couldn't find the bonus region")
                             continue
-                        hunting("attacker", aDMG, session)
+                        hunting("attacker", aDMG, dDMG < maxDmgForBh, session)
 
                     if dDMG < maxDmgForBh:
                         fly(server, apiBattles['regionId'], session=session)
-                        hunting("defender", dDMG, session)
+                        hunting("defender", dDMG, aDMG < maxDmgForBh, session)
 
                 elif apiBattles['type'] == "RESISTANCE":
                     fly(server, apiBattles['regionId'], session=session)
                     if aDMG < maxDmgForBh:
-                        hunting("attacker", aDMG, session)
+                        hunting("attacker", aDMG, dDMG < maxDmgForBh, session)
 
                     if dDMG < maxDmgForBh:
-                        hunting("defender", dDMG, session)
+                        hunting("defender", dDMG, aDMG < maxDmgForBh, session)
                 else:
                     continue
       except Exception as error:
           print(error)
-
-
 if __name__ == "__main__":
     print(hunt.__doc__)
     server = input("Server: ")
