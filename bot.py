@@ -463,7 +463,6 @@ async def Login(ctx, *, nick):
     """Should help you in error cases"""
     server = ctx.channel.name
     if nick.lower() == MY_NICKS[server].lower():
-        session = sessions[server]
         sessions[server] = login.login(server)
 
 @bot.command()
@@ -483,22 +482,24 @@ async def on_message(message):
             await bot.invoke(ctx)
         output = f.getvalue()
         
-        if "notLoggedIn" in output:
+        if "notLoggedIn" in output or "error" in output:
+            ctx = await bot.get_context(message)
             f = StringIO()
-            login.login(ctx.channel.name)
+            sessions[ctx.channel.name] = login.login(ctx.channel.name)
             with redirect_stdout(f):
                 await bot.invoke(ctx)
             output = f.getvalue()
             
-        if len(output) > 100 or "http" in output:
-            embed = discord.Embed()
-            embed.add_field(name=os.environ['nick'], value=output[:1000])
-            if output[1000:]:
-                embed.add_field(name="Page 2", value=output[1000:2000])
-            # Sending the output (all prints) to your channel.
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send(output[:2000])
+        if output:
+            if len(output) > 100 or "http" in output:
+                embed = discord.Embed()
+                embed.add_field(name=os.environ['nick'], value=output[:1000])
+                if output[1000:]:
+                    embed.add_field(name="Page 2", value=output[1000:2000])
+                # Sending the output (all prints) to your channel.
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send(output[:2000])
         f.close()
 
 @bot.event
