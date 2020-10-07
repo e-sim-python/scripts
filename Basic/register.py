@@ -16,7 +16,8 @@ def register(server, nick, password, lan, countryId):
         agent = "Dalvik/2.1.0 (Linux; U; Android 5.1.1; AFTM Build/LVY48F) CTV"
     headers = {"User-Agent": agent, "Referer": "https://e-sim.org"}
     session = requests.session()
-    session.get(URL + "index.html?lan=" + lan.replace(f"{URL}lan.", ""), headers=headers)
+    session.headers.update(headers)
+    session.get(URL + "index.html?lan=" + lan.replace(f"{URL}lan.", ""))
     login_params = {"preview": "USA_MODERN", "login": nick, "password": password,
                     "mail": f'{nick.replace(" ", "")}@gmail.com', "countryId": countryId, "checkHuman": "Human"}
     registration = session.post(URL + "registration.html", data=login_params)
