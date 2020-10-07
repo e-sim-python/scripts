@@ -99,7 +99,8 @@ def login(server):
         user_agent = data["user_agent"]
 
     headers = {"User-Agent": user_agent, "Referer": f"{URL}index.html"}
-    session = requests.session()    
+    session = requests.session() 
+    session.headers.update(headers)
     online_check = False
     if server in data:
         old_cookies = requests.utils.cookiejar_from_dict(data[server])
@@ -109,9 +110,8 @@ def login(server):
     if online_check or server not in data:
         nick, password = get_nick_and_pw(server)
         payload = {'login': nick, 'password': password, 'remember': True}
-
-        session.get(URL, headers=headers)
-        r = session.post(URL + "login.html", headers=headers, data=payload)
+        session.get(URL)
+        r = session.post(URL + "login.html", data=payload)
         if "notLoggedIn" in str(r.url):
             print(r.url)
             print("Login problem. check your nick and password and try again")
