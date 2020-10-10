@@ -18,9 +18,9 @@ Everything written is pretty much plain English, so you can see search for traps
 If you still think there is a suspicious line, you can [ask us about it, and warn other users as well](https://github.com/e-sim-python/scripts/issues)
 
 ### Usage:
-- Download and Install [python 3.6+](https://www.python.org/downloads/). (Android users click [here](https://github.com/e-sim-python/scripts/issues/2#issuecomment-698446627)).
+- Download and Install [python 3.6+](https://www.python.org/downloads/) and [add to path](http://prntscr.com/uwvy5z). (Android users click [here](https://github.com/e-sim-python/scripts/issues/2#issuecomment-698446627)).
 - Download the e-sim library as a zip file ([Code -> download ZIP](https://github.com/e-sim-python/scripts/archive/master.zip)) and extract it. (If you can't extract, [download WinRAR](https://www.rarlab.com/) first)
-- At the first run, you will have to excute [install_packets.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py), or install `requests` and `lxml` manually (type `pip install requests` on your start menu, or `py -m pip install requests` on your CMD).
+- At the first run, you will have to excute [install_packets.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py), or install `requests` and `lxml` manually (type `pip install requests` on your start menu, or `py -m pip install requests` on your CMD). ([More help for this step](https://packaging.python.org/tutorials/installing-packages/))
 - Double click (in your computer) on any script you want, or right click -> open with IDLE.
 - Alternative (advanced): import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/bot.py)). If you need help, execute `print (function_name.__doc__)`
 
