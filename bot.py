@@ -11,7 +11,7 @@ from login import get_nick_and_pw
 
 
 bot = commands.Bot(command_prefix=".", case_insensitive=True)
-YOUR_SECRET_TOKEN = input("Your discord token (help - https://www.writebots.com/discord-bot-token/): ")
+YOUR_SECRET_TOKEN = input("Your discord token (help - https://discordpy.readthedocs.io/en/latest/discord.html): ")
 
 sessions = defaultdict(lambda: "")
 
