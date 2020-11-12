@@ -17,7 +17,7 @@ from lxml.html import fromstring
 from random import choice, randint
 
 
-def missions(server, missions_to_complete="ALL", action="ALL", session=""):
+async def missions(server, missions_to_complete="ALL", action="ALL", session=""):
     """Finish missions.
     * Leave "action" parameter empty if you don't need it to do specific action.
     * Leave "missions_to_complete" parameter empty if you don't want to complete all missions.
@@ -94,7 +94,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     elif num == 46:
                         restores = "2"
                         print(f"Hitting {restores} restores, it might take a while")
-                    auto_fight(server, restores="1")
+                    await auto_fight(server, restores="1")
                 elif num == 6:
                     session.post(f"{URL}food.html?quality=1")
                 elif num == 8:
@@ -122,7 +122,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                 elif num == 14:
                     i = session.get(URL + 'storage.html?storageType=EQUIPMENT')
                     tree = fromstring(i.content)
-                    ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0].replace("#", "")
+                    ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0]
                     payload = {'action': "EQUIP", 'itemId': ID.replace("#", "")}
                     session.post(URL + "equipmentAction.html", data=payload)
                 elif num == 15:
@@ -145,7 +145,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                 elif num == 21:
                     i = session.get(URL + 'storage.html?storageType=EQUIPMENT')
                     tree = fromstring(i.content)
-                    ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0]
+                    ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0].replace("#", "")
                     sell_eqs(server, ID, 0.01, 48, session)
                 elif num == 22:
                     Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
@@ -229,7 +229,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     session.post(f"{URL}medkit.html")
                     # if food & gift limits > 10 it won't work.
                 else:
-                    print("I don't know how to finish this mission. you have few seconds to stop me before i skip it")
+                    print("I don't know how to finish this mission.")
                 time.sleep(randint(1, 7))
                 c = session.post(URL + "betaMissions.html?action=COMPLETE", data={"submit": "Receive"})
                 if "MISSION_REWARD_OK" not in str(c.url) and "?action=COMPLETE" not in str(c.url):
