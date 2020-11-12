@@ -17,7 +17,7 @@ def _do_not_send_twice(URL, blacklist, contract_name, session):
             nick = line[1].strip()
             contract_offer_name = line[0].strip()
             if contract_offer_name.lower() == contract_name.lower() and "offered to" in line1:
-                blacklist.append(nick)
+                blacklist.add(nick)
         except:
             break
     return blacklist
@@ -36,7 +36,7 @@ def _remove_rejected(URL, blacklist, session):
             line = tree.xpath(f"//tr[{tr}]//td[2]/text()")
             if "   has rejected your  " in line:
                 nick = str(tree.xpath(f"//tr[{tr}]//td[2]//a[1]")[0].text).strip()
-                blacklist.append(nick)
+                blacklist.add(nick)
     return blacklist
 
 def _get_friends_list(server):
