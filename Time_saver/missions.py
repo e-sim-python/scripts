@@ -17,7 +17,7 @@ from lxml.html import fromstring
 from random import choice, randint
 
 
-async def missions(server, missions_to_complete="ALL", action="ALL", session=""):
+def missions(server, missions_to_complete="ALL", action="ALL", session=""):
     """Finish missions.
     * Leave "action" parameter empty if you don't need it to do specific action.
     * Leave "missions_to_complete" parameter empty if you don't want to complete all missions.
@@ -94,7 +94,7 @@ async def missions(server, missions_to_complete="ALL", action="ALL", session="")
                     elif num == 46:
                         restores = "2"
                         print(f"Hitting {restores} restores, it might take a while")
-                    await auto_fight(server, restores="1")
+                    auto_fight(server, restores="1")
                 elif num == 6:
                     session.post(f"{URL}food.html?quality=1")
                 elif num == 8:
