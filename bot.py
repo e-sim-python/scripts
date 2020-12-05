@@ -47,7 +47,7 @@ async def work(ctx, *, nick):
     server = ctx.channel.name
     if nick.lower() == MY_NICKS[server].lower():
         session = sessions[server]
-        queue == "+" if ctx.invoked_with.lower() == "work+" else ""
+        queue = "+" if ctx.invoked_with.lower() == "work+" else ""
         sessions[server] = login.double_click(server, queue, session)
         
 @bot.command()
@@ -493,7 +493,7 @@ async def on_message(message):
         if output:
             if len(output) > 100 or "http" in output:
                 embed = discord.Embed()
-                embed.add_field(name=os.environ['nick'], value=output[:1000])
+                embed.add_field(name=MY_NICKS[ctx.channel.name].lower(), value=output[:1000])
                 if output[1000:]:
                     embed.add_field(name="Page 2", value=output[1000:2000])
                 # Sending the output (all prints) to your channel.
