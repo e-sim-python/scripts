@@ -219,3 +219,13 @@ def _fighting(server, battle_id, side, wep, session=""):
         except Exception as e:
             print(e)
             time.sleep(randint(2, 5))
+
+                                   
+def _location(server):
+    """getting current location"""
+    URL = f"https://{server}.e-sim.org/"
+    nick = get_nick_and_pw(server)[0]
+    time.sleep(randint(1,2))
+    apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
+    currentLocationRegionId = apiCitizen['currentLocationRegionId']
+    return currentLocationRegionId
