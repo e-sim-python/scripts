@@ -1,7 +1,7 @@
 from login import login, double_click
 import __init__
-from Help_functions._bot_functions import _fighting, _random_sleep, _get_battle_id
-
+from Help_functions._bot_functions import _fighting, _random_sleep, _get_battle_id, _location
+from Basic.fly import fly
 
 from random import randint
 import requests
@@ -26,7 +26,9 @@ def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gift="",
                 check = tree.xpath('//*[@id="taskButtonWork"]//@href')  # checking if you can work
                 A = randint(1, 4)
                 if check and A == 2:  # Don't work as soon as you can (suspicious)
+                    current_loc = _location(server)
                     double_click(server, session)
+                    fly(server, current_loc, session=session)
                 apiBattles = requests.get(f"{URL}apiBattles.html?battleId={battle_id}").json()[0]
                 if 8 in (apiBattles['attackerScore'], apiBattles['defenderScore']):
                     print("Battle has finished, i will search for another one")
