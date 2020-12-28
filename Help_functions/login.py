@@ -16,9 +16,10 @@ def define_login_details(nick="", password="", server=""):
     """Saving nicks, passwords for each server from the user, for later use."""
     file_name = path.join(dir, 'login_details.csv')
     if nick and password and server:
+        file_exist = path.isfile(file_name)
         with open(file_name, 'a', newline='') as csvFile:
             writer = csv.writer(csvFile)
-            if not path.isfile(file_name):
+            if not file_exist: 
                 writer.writerow(["Server", "Nick", "Password"])
             writer.writerow([server, nick, password])
     if not path.isfile(file_name) or (server and server != "all"):
@@ -32,6 +33,8 @@ def define_login_details(nick="", password="", server=""):
             nick, password = "", ""
             for server in servers.split(","):
                 server = server.strip().lower()
+                if not server:
+                    continue
                 if nick and password:
                     print(f"If your nick/password for {server} is the same as of the previous server, you can leave that field blank")
                 new_nick = input(f"Your nick at {server} (pay attention to uppercase and lowercase letters): ")
