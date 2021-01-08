@@ -1,18 +1,20 @@
-from login import login
+import asyncio
 
-def sub(server, newspaper_id, session=""):
+from login import get_content
+
+
+async def sub(server, newspaper_id):
     """Subscribe to specific newspaper"""
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
-    post_sub = session.post(f"{URL}sub.html?id={newspaper_id}")
-    print(post_sub.url)
-    return session
-    
-    
+
+    url = await get_content(f"{URL}sub.html", data={"id": newspaper_id}, login_first=True)
+    print(url)
+
 if __name__ == "__main__":
     print(sub.__doc__)
     server = input("Server: ")
-    newspaper_id = input("newspaper id: ")
-    sub(server, newspaper_id)
+    newspaper_id = int(input("newspaper id: "))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        sub(server, newspaper_id))
     input("Press any key to continue")

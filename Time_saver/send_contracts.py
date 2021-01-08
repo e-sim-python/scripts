@@ -1,15 +1,13 @@
-from login import login, get_nick_and_pw
-import __init__
-from Help_functions._bot_functions import _get_staff_list
+import asyncio
 
-import requests  
-from lxml.html import fromstring
+from Help_functions.bot_functions import get_staff_list
+from login import get_content, get_nick_and_pw
 
-def _do_not_send_twice(URL, blacklist, contract_name, session):
-    contracts = session.get(f'{URL}contracts.html')
-    tree = fromstring(contracts.content)
+
+async def _do_not_send_twice(URL, blacklist, contract_name):
+    tree = await get_content(f'{URL}contracts.html')
     li = 0
-    while 1:
+    for _ in range(100):
         try:
             li += 1
             line = tree.xpath(f'//*[@id="esim-layout"]//div[2]//ul//li[{li}]/a/text()')
@@ -22,54 +20,50 @@ def _do_not_send_twice(URL, blacklist, contract_name, session):
             break
     return blacklist
 
-def _remove_rejected(URL, blacklist, session):
-    notifications = session.get(URL+'notifications.html?filter=CONTRACTS')
-    tree = fromstring(notifications.content)
-    try:
-        last = tree.xpath("//ul[@id='pagination-digg']//li[last()-1]//@href")[0].split("page=")[1]
-    except:
-        last = 1
+
+async def _remove_rejected(URL, blacklist):
+    tree = await get_content(URL+'notifications.html?filter=CONTRACTS')
+    last = tree.xpath("//ul[@id='pagination-digg']//li[last()-1]//@href")
+    last = last[0].split('page=', 1)[1]
     for page in range(1, int(last)+1):
-        notifications = session.get(f'{URL}notifications.html?filter=CONTRACTS&page={page}')
-        tree = fromstring(notifications.content)
+        if page != 1:
+            tree = await get_content(f'{URL}notifications.html?filter=CONTRACTS&page={page}')
         for tr in range(2, 22):
-            line = tree.xpath(f"//tr[{tr}]//td[2]/text()")
-            if "   has rejected your  " in line:
-                nick = str(tree.xpath(f"//tr[{tr}]//td[2]//a[1]")[0].text).strip()
-                blacklist.add(nick)
+            if "   has rejected your  " in tree.xpath(f"//tr[{tr}]//td[2]/text()"):
+                blacklist.add(str(tree.xpath(f"//tr[{tr}]//td[2]//a[1]")[0].text).strip())
     return blacklist
 
-def _get_friends_list(server):
+
+async def _get_friends_list(server):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
-    apiCitizen = requests.get(f'{URL}apiCitizenByName.html?name={nick.lower()}').json()
+    apiCitizen = await get_content(f'{URL}apiCitizenByName.html?name={nick.lower()}')
 
     for page in range(1, 100):
-        my_friends = requests.get(f'{URL}profileFriendsList.html?id={apiCitizen["id"]}&page={page}')
-        tree = fromstring(my_friends.content)
+        tree = await get_content(f'{URL}profileFriendsList.html?id={apiCitizen["id"]}&page={page}')
         for div in range(1, 21):
             friend = tree.xpath(f'//div//div[1]//div[{div}]/a/text()')
             if not friend:
                 return
             yield friend[0].strip()
- 
-def send_contracts(server, contract_id, contract_name):
+
+
+async def send_contracts(server, contract_id, contract_name):
     """
     Sending specific contract to all your friends.
     Exceptions: If you have already sent them that contract, if they have rejected your previous one,
     or if they are staff members"""
     URL = f"https://{server}.e-sim.org/"
-    session = login(server)
-    blacklist = _get_staff_list(URL)
-    blacklist = _do_not_send_twice(URL, blacklist, contract_name, session)
-    blacklist = _remove_rejected(URL, blacklist, session)
-    for nick in _get_friends_list(server):
+    blacklist = get_staff_list(URL)
+    blacklist = _do_not_send_twice(URL, blacklist, contract_name)
+    blacklist = _remove_rejected(URL, blacklist)
+    for Index, nick in enumerate(_get_friends_list(server)):
         if nick not in blacklist:
             payload = {'id': contract_id, 'action': "PROPOSE", 'citizenProposedTo': nick, 'submit': 'Propose'}
             for _ in range(10):
                 try:
-                    b = session.post(URL + "contract.html", data=payload)
-                    print(nick, b.url)
+                    b = await get_content(URL + "contract.html", data=payload, login_first=not Index)
+                    print(nick, b)
                     break  # sent
                 except:  # some error
                     pass
@@ -80,5 +74,7 @@ if __name__ == "__main__":
     server = input("Server: ")
     contract_id = input("Your contract id: ")
     contract_name = input("Your contract name: ")
-    send_contracts(server, contract_id, contract_name)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        send_contracts(server, contract_id, contract_name))
     input("Press any key to continue")

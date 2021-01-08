@@ -1,19 +1,19 @@
-from login import login
+import asyncio
 
-def article(server, articleId, session=""):
+from login import get_content
+
+
+async def article(server, article_id):
     """Voting an article"""
     URL = f"https://{server}.e-sim.org/"
-    articleId = str(articleId).replace(f"{URL}article.html?id=", "")
-    if not session:
-        session = login(server)
-    session.post(f"{URL}vote.html?id={articleId}")
-    print(f"Voted article {articleId} at {server}")
-    return session
+    await get_content(f"{URL}vote.html", data={"id": article_id}, login_first=True)
+    print(f"Voted article {article_id} at {server}")
 
-    
 if __name__ == "__main__":
     print(article.__doc__)
     server = input("Server: ")
-    articleId = input("Article id or link: ")
-    article(server, articleId)
+    article_id = int(input("Article id or link: ").split("article.html?id=")[-1])
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        article(server, article_id))
     input("Press any key to continue")

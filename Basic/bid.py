@@ -1,16 +1,14 @@
-from login import login
+import asyncio
 
-import requests
-from lxml.html import fromstring
-import time
+from login import get_content
 
-def bid_specific_auction(server, auction_id_or_link, price, delay=True):
+
+async def bid_specific_auction(server, auction_id_or_link, price, delay=True):
     """Bidding an auction few seconds before it's end"""
     URL = f"https://{server}.e-sim.org/"
     if ".e-sim.org/auction.html?id=" in auction_id_or_link:
         auction_id_or_link = auction_id_or_link.split("=")[1]
-    auction_url = requests.get(f"{URL}auction.html?id={auction_id_or_link}")
-    tree = fromstring(auction_url.content)
+    tree = await get_content(f"{URL}auction.html?id={auction_id_or_link}", login_first=True)
     try:
         auction_time = str(tree.xpath(f'//*[@id="auctionClock{auction_id}"]')[0].text)
     except:
@@ -20,13 +18,10 @@ def bid_specific_auction(server, auction_id_or_link, price, delay=True):
     h, m, s = auction_time.split(":")
     if delay:
         delay_in_seconds = int(h) * 3600 + int(m) * 60 + int(s) - 30
-        time.sleep(delay_in_seconds)
-    session = login(server)
+        await asyncio.sleep(delay_in_seconds)
     payload = {'action': "BID", 'id': auction_id_or_link, 'price': price}
-    post_bid = session.post(URL + "auctionAction.html", data=payload)
-    print(post_bid.url)
-    return session
-
+    url = await get_content(URL + "auctionAction.html", data=payload)
+    print(url)
 
 if __name__ == "__main__":
     print(bid_specific_auction.__doc__)
@@ -35,5 +30,7 @@ if __name__ == "__main__":
     price = input("Your bid: ")
     delay = input("Bid near auctions end? (y/n): ")
     delay = True if delay.lower() == "y" else False
-    bid_specific_auction(server, auction_id, price, delay=False if delay == "n" else True)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        bid_specific_auction(server, auction_id, price, delay=False if delay == "n" else True))
     input("Press any key to continue")

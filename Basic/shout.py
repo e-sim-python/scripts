@@ -1,20 +1,22 @@
-from login import login
+import asyncio
 
-def shout(server, shout_body, session=""):
+from login import get_content
+
+
+async def shout(server, shout_body):
     """Publishing a shout."""
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
+
     payload = {'action': "POST_SHOUT", 'body': shout_body, 'sendToCountry': "on",
                "sendToMilitaryUnit": "on", "sendToParty": "on", "sendToFriends": "on"}
-    publish_shout = session.post(f"{URL}shoutActions.html", data=payload)
-    print(publish_shout.url)
-    return session
-
+    url = await get_content(f"{URL}shoutActions.html", data=payload, login_first=True)
+    print(url)
 
 if __name__ == "__main__":
     print(shout.__doc__)
     server = input("Server: ")
     shout_body = input("Shout body: ")
-    shout(server, shout_body)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        shout(server, shout_body))
     input("Press any key to continue")

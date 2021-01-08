@@ -1,11 +1,10 @@
-from login import login
-
+import asyncio
 from random import randint
-import requests
-from lxml.html import fromstring
-import time
 
-def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0"):
+from login import get_content
+
+
+async def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0"):
     """
     Hunting BH at specific battle.
     (Good for practice / leagues / CW)
@@ -16,26 +15,15 @@ def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0"):
         print(f'"side" must be "defender" or "attacker" (not {side})')
         return
     max_dmg_for_bh = max_dmg_for_bh.replace("k", "000")
-    r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
+    r = await get_content(link.replace("battle", "apiBattles").replace("id", "battleId"))
     while 8 not in (r['defenderScore'], r['attackerScore']):
-        r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
-        time_till_round_end = r["hoursRemaining"]*3600 + r["minutesRemaining"]*60 +\
-                              r["secondsRemaining"] - randint(15, 45)
+        r = await get_content(link.replace("battle", "apiBattles").replace("id", "battleId"))
+        time_till_round_end = r["hoursRemaining"]*3600 + r["minutesRemaining"]*60 + r["secondsRemaining"] - randint(15, 45)
         print(f"Hunting at {link} ({side}). sleeping for {time_till_round_end} seconds.")
-        time.sleep(time_till_round_end)
-        session = login(server)
-        r = session.get(link)
-        tree = fromstring(r.content)
+        await asyncio.sleep(time_till_round_end)
+        tree = await get_content(link, login_first=True)
         DamageDone = 0
         while DamageDone < int(max_dmg_for_bh):
-            for _ in range(5):
-                try:
-                    r = session.get(link)
-                    tree = fromstring(r.content)
-                    if r.status == 200:
-                        break
-                except:
-                    time.sleep(1)
             Health = int(float(str(tree.xpath("//*[@id='actualHealth']")[0].text)))
             hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
             food = tree.xpath('//*[@id="foodLimit2"]')[0].text
@@ -43,26 +31,25 @@ def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0"):
             gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
             if Health < 50:
                 if int(food) and int(food_limit):
-                    session.post(f"{URL}eat.html?quality=5")
+                    await get_content(f"{URL}eat.html", data={'quality': 5})
                 else:
-                    session.post(f"{URL}gift.html?quality=5")
+                    await get_content(f"{URL}gift.html", data={'quality': 5})
             Damage = 0
             for _ in range(5):
                 try:
-                    r = session.post(f"{URL}fight.html?weaponQuality={weapon_quality}&battleRoundId={hidden_id}&side={side}")
-                    tree = fromstring(r.content)
+                    tree, status = await get_content(f"{URL}fight.html?weaponQuality={weapon_quality}&battleRoundId={hidden_id}&side={side}")
                     Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                     break
                 except:
                     Damage = 0
-                    time.sleep(2)
+                    await asyncio.sleep(2)
             DamageDone += Damage
             if DamageDone >= int(max_dmg_for_bh):
                 break
             if int(food) == 0 and int(gift) == 0 and Health == 0:
                 print("done limits")
                 return
-            time.sleep(randint(0, 2))
+            await asyncio.sleep(randint(0, 2))
 
 
 if __name__ == "__main__":
@@ -71,5 +58,7 @@ if __name__ == "__main__":
     side = input("Side (attacker/defender: ")
     max_dmg_for_bh = input("Max dmg for bh (write 1 if you are debuff): ")
     weapon_quality = input("Weapon quality (0-5): ")
-    hunt_specific_battle(link, side, max_dmg_for_bh, weapon_quality)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        hunt_specific_battle(link, side, max_dmg_for_bh, weapon_quality))
     input("Press any key to continue")

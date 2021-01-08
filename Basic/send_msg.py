@@ -1,16 +1,14 @@
-from login import login
+import asyncio
 
-def send_msg(server, receiver_name, title, body, session=""):
+from login import get_content
+
+
+async def send_msg(server, receiver_name, title, body):
     """Sending a msg."""
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
-
     payload = {'receiverName': receiver_name, "title": title, "body": body, "action": "REPLY", "submit": "Send"}
-    send_action = session.post(URL + "composeMessage.html", data=payload)
-    print(send_action.url)
-    return session
-
+    url = await get_content(URL + "composeMessage.html", data=payload, login_first=True)
+    print(url)
 
 if __name__ == "__main__":
     print(send_msg.__doc__)
@@ -18,5 +16,7 @@ if __name__ == "__main__":
     receiver_name = input("Receiver name: ")
     title = input("Title: ")
     body = input("Message body: ")
-    send_msg(server, receiver_name, title, body)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        send_msg(server, receiver_name, title, body))
     input("Press any key to continue")

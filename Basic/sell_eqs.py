@@ -1,14 +1,16 @@
-import __init__
-from login import login
-from Basic.wear_unwear import wear_unwear
+import asyncio
 
-def sell_eqs(server, ids, price, hours, session=""):
+from Basic.wear_unwear import wear_unwear
+from login import get_content
+
+
+async def sell_eqs(server, ids, price, hours):
     """Sell specific EQ ID(s) & reshuffle & upgrade  at auctions."""
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
+
     results = []
-    for ID in ids.split(","):
+    ids = [x.strip() for x in ids.split(",") if x.strip()]
+    for Index, ID in enumerate(ids):
         ID = ID.replace(URL + "showEquipment.html?id=", "").strip()
         if ID == "reshuffle":
             item = "SPECIAL_ITEM 20"
@@ -17,14 +19,12 @@ def sell_eqs(server, ids, price, hours, session=""):
         else:
             item = f"EQUIPMENT {ID}"
         payload = {'action': "CREATE_AUCTION", 'price': price, "id": item, "length": hours, "submit": "Create auction"}
-        post_auction = session.post(URL + "auctionAction.html", data=payload)
-        if "CREATE_AUCTION_ITEM_EQUIPED" in str(post_auction.url):
-            wear_unwear(server, ID, "-", session)
-            post_auction = session.post(URL + "auctionAction.html", data=payload)
-        results.append(f"ID {ID} - {post_auction.url}\n")
+        url = await get_content(URL + "auctionAction.html", data=payload, login_first=not Index)
+        if "CREATE_AUCTION_ITEM_EQUIPED" in url:
+            await wear_unwear(server, ID, "-")
+            url = await get_content(URL + "auctionAction.html", data=payload)
+        results.append(f"ID {ID} - {url}\n")
     print("".join(results))
-    return session
-
 
 if __name__ == "__main__":
     print(sell_eqs.__doc__)
@@ -32,5 +32,7 @@ if __name__ == "__main__":
     ids = input("EQs ids (separated by a comma): ")
     price = input("Starting price: ")
     hours = input("Hours: ")
-    sell_eqs(server, ids, price, hours)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        sell_eqs(server, ids, price, hours))
     input("Press any key to continue")

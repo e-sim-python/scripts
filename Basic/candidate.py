@@ -1,4 +1,6 @@
-from login import login
+import asyncio
+
+from login import get_content
 
 try:
     import pytz
@@ -7,9 +9,9 @@ except:
     print("We recommend installing pytz (pip install pytz) in order to get e-sim time")
     game_time = False
 from datetime import datetime
-from lxml.html import fromstring
 
-def candidate(server, session=""):
+
+async def candidate(server):
     """
     Candidate for congress / president elections.
     It will also auto join to the first party (by members) if necessary."""
@@ -26,30 +28,27 @@ def candidate(server, session=""):
         link = "congressElections.html"
     else:
         print("Can't candidate today. Try another time.")
-        return session
+        return
 
-    if not session:
-        session = login(server)
-
+    ID = ""
     try:
-        party = session.get(URL + "partyStatistics.html?statisticType=MEMBERS")
-        tree = fromstring(party.content)
+        tree = await get_content(URL + "partyStatistics.html?statisticType=MEMBERS", login_first=True)
         ID = str(tree.xpath('//*[@id="esim-layout"]//table//tr[2]//td[3]//@href')[0]).split("=")[1]
         party_payload = {"action": "JOIN", "id": ID, "submit": "Join"}
-        join_party = session.post(URL + "partyStatistics.html", data=party_payload)
-        if str(join_party.url) != URL + "?actionStatus=PARTY_JOIN_ALREADY_IN_PARTY":
-            print(join_party.url)
+        url = await get_content(URL + "partyStatistics.html", data=party_payload)
+        if str(url) != URL + "?actionStatus=PARTY_JOIN_ALREADY_IN_PARTY":
+            print(url)
 
     except:
         pass
 
-    send_action = session.post(URL + link, data=payload)
-    print(send_action.url)
-    return session
-
+    url = await get_content(URL + link, data=payload, login_first=not ID)
+    print(url)
 
 if __name__ == "__main__":
     print(candidate.__doc__)
     server = input("Server: ")
-    candidate(server)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        candidate(server))
     input("Press any key to continue")

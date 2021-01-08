@@ -1,24 +1,23 @@
-from login import login, double_click
+import asyncio
 
-from lxml.html import fromstring
+from login import double_click, get_content
 
-def job(server, session=""):
+
+async def job(server):
     """Leaving job and apply for the best offer at the local market."""
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
-    session.post(URL + "work.html", data={'action': "leave", "submit": "Submit"})
-    jobMarket = session.get(URL + "jobMarket.html")
-    tree = fromstring(jobMarket.content)
-    jobId = tree.xpath("//tr[2]//td[6]//input[1]")[0].value
-    apply = session.post(URL + "jobMarket.html", data={"id": jobId, "submit": "Apply"})
-    print(apply.url)
-    double_click(server, session=session)
-    return session
 
+    await get_content(URL + "work.html", data={'action': "leave", "submit": "Submit"}, login_first=True)
+    tree = await get_content(URL + "jobMarket.html")
+    jobId = tree.xpath("//tr[2]//td[6]//input[1]")[0].value
+    url = await get_content(URL + "jobMarket.html", data={"id": jobId, "submit": "Apply"})
+    print(url)
+    await double_click(server)
 
 if __name__ == "__main__":
     print(job.__doc__)
     server = input("Server: ")
-    job(server)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        job(server))
     input("Press any key to continue")

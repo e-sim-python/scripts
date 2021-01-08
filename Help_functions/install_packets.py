@@ -4,30 +4,33 @@ input("This program should help you install lxml and requests modules, using man
 def method1(package):
     from pip._internal import main
     main(['install', package])
-    import requests
+    import aiohttp
     import lxml
     
+
 def method2(package):
     import pip
     pip.main(['install', package])
-    import requests
+    import aiohttp
     import lxml
+
 
 def method3(package):
     import subprocess
     import sys
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-    import requests
+    import aiohttp
     import lxml
+
 
 def method4(package):
     import subprocess
     subprocess.call(['pip', 'install', package])
-    import requests
+    import aiohttp
     import lxml
     
 
-for package in ["requests", "lxml"]:
+for package in ["aiohttp", "lxml"]:
     try:
         method1(package)
     except:
@@ -35,7 +38,7 @@ for package in ["requests", "lxml"]:
             method2(package)
         except:
             try:
-                 method3(package)
+                method3(package)
             except:
                 try:
                     method4(package)

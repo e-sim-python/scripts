@@ -1,9 +1,9 @@
-from login import login
+import asyncio
 
-import time
-from lxml.html import fromstring
+from login import get_content
 
-def merge(server, ids, session=""):
+
+async def merge(server, ids):
     """
     Merge specific EQ IDs / all EQs in storage (good for non-premium players).
     
@@ -15,20 +15,16 @@ def merge(server, ids, session=""):
     merge("alpha", "10, 15, 18") -> Merge eqs id 10, 15 and 18
     """    
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
-
     if "," in ids:
         EQ1, EQ2, EQ3 = [eq.strip() for eq in ids.split(",")]
         payload = {'action': "MERGE", f'itemId[{EQ1}]': EQ1, f'itemId[{EQ2}]': EQ2, f'itemId[{EQ3}]': EQ3}
-        merge_request = session.post(URL + "equipmentAction.html", data=payload)
-        print(merge_request.url)
+        merge_request = await get_content(URL + "equipmentAction.html", data=payload, login_first=True)
+        print(merge_request)
 
     else:
         max_q_to_merge = int(ids.lower().replace("q", ""))  # max_q_to_merge - including
-        for _ in range(5):
-            get_eqs = session.get(f'{URL}storage.html?storageType=EQUIPMENT')
-            tree = fromstring(get_eqs.content)
+        for Index in range(5):
+            tree = await get_content(f'{URL}storage.html?storageType=EQUIPMENT', login_first=not Index)
             IDs = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')
             items = tree.xpath(f'//*[starts-with(@id, "cell")]/b/text()')
             DICT = {}
@@ -44,22 +40,22 @@ def merge(server, ids, session=""):
                         EQ1, EQ2, EQ3 = DICT[i][z*3:z*3 + 3]
                         payload = {'action': "MERGE", f'itemId[{EQ1}]': EQ1, f'itemId[{EQ2}]': EQ2,
                                    f'itemId[{EQ3}]': EQ3}
-                        merge_request = session.post(URL + "equipmentAction.html", data=payload)
-                        print(merge_request.url)
-                        time.sleep(1)
-                        if str(merge_request.url) == "http://www.google.com/":
+                        merge_request = await get_content(URL + "equipmentAction.html", data=payload)
+                        print(merge_request)
+                        await asyncio.sleep(1)
+                        if merge_request == "http://www.google.com/":
                             # e-sim error
-                            time.sleep(5)
+                            await asyncio.sleep(5)
 
-                        elif "?actionStatus=CONVERT_ITEM_OK" not in str(merge_request.url):
+                        elif "?actionStatus=CONVERT_ITEM_OK" not in merge_request:
                             # no money etc
                             break
-    return session
-
 
 if __name__ == "__main__":
     print(merge.__doc__)
     server = input("Server: ")
     ids = input("EQs ids, or max Q to merge: ")
-    merge(server, ids)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        merge(server, ids))
     input("Press any key to continue")

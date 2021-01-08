@@ -1,4 +1,6 @@
-from login import login
+import asyncio
+
+from login import get_content
 
 try:
     import pytz
@@ -7,11 +9,12 @@ except:
     print("We recommend installing pytz (pip install pytz) in order to get e-sim time")
     game_time = False
 from datetime import datetime
-from lxml.html import fromstring
 
-def elect(server, your_candidate, session=""):
+
+async def elect(server, your_candidate):
     """Voting in congress / president elections."""
     # Functions in use: login, pytz, datetime (datetime)
+    your_candidate = your_candidate.lower()
     URL = f"https://{server}.e-sim.org/"
     if game_time:
         today = int(datetime.now().astimezone(pytz.timezone('Europe/Berlin')).strftime("%d"))  # game time
@@ -26,17 +29,13 @@ def elect(server, your_candidate, session=""):
         link = "congressElections.html"
     else:
         print("There are not elections today")
-        return session
+        return
 
-    if not session:
-        session = login(server)
-
-    election_page = session.get(URL + link)
-    tree = fromstring(election_page.content)
+    tree = await get_content(URL + link, login_first=True)
     payload = ""
     for tr in range(2, 43):
         try:
-            name = tree.xpath(f'//*[@id="esim-layout"]//tr[{tr}]//td[2]/a/text()')[0].strip()
+            name = tree.xpath(f'//*[@id="esim-layout"]//tr[{tr}]//td[2]/a/text()')[0].strip().lower()
         except:
             print(f"No such candidate ({your_candidate})")
             return
@@ -50,14 +49,14 @@ def elect(server, your_candidate, session=""):
             break
 
     if payload:
-        post_vote = session.post(URL + link, data=payload)
-        print(post_vote.url)
-    return session
-
+        url = await get_content(URL + link, data=payload)
+        print(url)
 
 if __name__ == "__main__":
     print(elect.__doc__)
     server = input("Server: ")
     candidate = input("I want to vote for this candidate: ")
-    elect(server, candidate)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        elect(server, candidate))
     input("Press any key to continue")

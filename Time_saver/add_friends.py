@@ -1,48 +1,44 @@
-from login import login
+import asyncio
+from json import loads
 
-import time
-from lxml.html import fromstring
-import json
+from login import get_content
 
-def friends(server, option="online", session=""):
+
+async def friends(server, option="online"):
     """Sending friend request to the entire server / all online citizens"""
     URL = f"https://{server}.e-sim.org/"
-    if not session:
-        session = login(server)
+
     if option == "online":
-        apiOnline = session.get(f"{URL}apiOnlinePlayers.html").json()
-        for row in apiOnline:
-            row = json.loads(row)
+        for Index, row in enumerate(await get_content(f"{URL}apiOnlinePlayers.html")):
+            row = loads(row)
             try:
-                send = session.get(f"{URL}friends.html?action=PROPOSE&id={row['id']}")
-                if "PROPOSED_FRIEND_OK" in str(send.url):
+                url = await get_content(f"{URL}friends.html?action=PROPOSE&id={row['id']}", login_first=not Index, return_url=True)
+                if "PROPOSED_FRIEND_OK" in str(url):
                     print("Sent to:", row['login'])
             except Exception as error:
                 print("error:", error)
-            time.sleep(1)
+            await asyncio.sleep(1)
     else:
-        get_pages_count = session.get(URL + 'citizenStatistics.html?statisticType=DAMAGE&countryId=0')
-        tree = fromstring(get_pages_count.content)
+        tree = await get_content(URL + 'citizenStatistics.html?statisticType=DAMAGE&countryId=0')
         last = tree.xpath("//ul[@id='pagination-digg']//li[last()-1]//@href")
         last = last[0].split("page=")[1]
         for page in range(1, int(last) + 1):
-            i = session.get(URL + 'citizenStatistics.html?statisticType=DAMAGE&countryId=0&page=' + str(page))
-            tree = fromstring(i.content)
-            links = tree.xpath("//td/a/@href")
-            for link in links:
+            if page != 1:
+                tree = await get_content(URL + 'citizenStatistics.html?statisticType=DAMAGE&countryId=0&page=' + str(page))
+            for link in tree.xpath("//td/a/@href"):
                 try:
-                    send = session.get(f"{URL}friends.html?action=PROPOSE&id={link.split('=', 1)[1]}")
-                    if "PROPOSED_FRIEND_OK" in str(send.url):
-                        print(send.url)
+                    send = await get_content(f"{URL}friends.html?action=PROPOSE&id={link.split('=')[1]}", return_url=True)
+                    if "PROPOSED_FRIEND_OK" in str(send):
+                        print(send)
                 except Exception as error:
                     print("error:", error)
-                time.sleep(1)
-    return session
-
+                await asyncio.sleep(1)
 
 if __name__ == "__main__":
     print(friends.__doc__)
     server = input("Server: ")
     option = input("Send friend request to all active players, or only to those who online right now? (online/all) ")
-    friends(server, option)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        friends(server, option))
     input("Press any key to continue")

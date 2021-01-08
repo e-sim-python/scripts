@@ -1,4 +1,7 @@
+discord.py
 lxml
 requests
 pytz
 Pillow
+pymongo
+dnspython
