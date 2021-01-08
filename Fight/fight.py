@@ -95,7 +95,11 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
             print(f"Done {DamageDone} {hits_or_dmg}")
             break
         if not food and not gift and not Health:
-            break
+            use_medkit = input(f"Done limits. use medkit and continue (y/n)?")
+            if use_medkit == "y":
+                await get_content(f"{URL}medkit.html")
+            else:
+                break
         await asyncio.sleep(1)
 
 if __name__ == "__main__":
