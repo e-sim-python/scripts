@@ -1,7 +1,6 @@
 discord.py
+aiohttp[speedups]==3.6.0
 lxml
-requests
 pytz
-Pillow
 pymongo
 dnspython
