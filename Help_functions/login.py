@@ -96,7 +96,7 @@ cookies = {}
 session = ClientSession(headers=headers)
 
 
-async def get_content(link, data=None, login_first=False, return_url=False):
+async def get_content(link, data=None, login_first=False, return_url=False, first_run=False):
     """
     Return types:
     Method post -> respond url (unless fight.html in link -> tree and url)
@@ -112,7 +112,7 @@ async def get_content(link, data=None, login_first=False, return_url=False):
 
     server = link.split("#")[0].replace("http://", "https://").split("https://")[1].split(".e-sim.org")[0]
     method = "get" if not data and "fight.html" not in link and "medkit.html" not in link else "post"
-    if login_first:
+    if login_first or first_run:
         await login(server)
     async with session.get(link, cookies=cookies[server], headers=headers) if method == "get" else \
                session.post(link, cookies=cookies[server], headers=headers, data=data) as respond:
