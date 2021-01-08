@@ -174,13 +174,14 @@ async def double_click(server, queue=""):
             region = tree.xpath('//div[1]//div[2]//div[5]//div[1]//div//div[1]//div//div[4]//a/@href')[0].split("=")[1]
             payload = {'countryId': int(int(region) / 6) + (int(region) % 6 > 0), 'regionId': region,
                        'ticketQuality': 5}
+            await get_content(URL + "travel.html", data=payload)
         except:
             return print("I couldn't find in which region your work is. Maybe you don't have a job")
-        await get_content(URL + "travel.html", data=payload)
+
         await get_content(URL + "train/ajax", data={"action": "train"})
         print("Trained successfully at", server)
-        tree = await get_content(URL + "work/ajax", data={"action": "work"}, return_url=True)
-        if not tree.xpath('//*[@id="taskButtonWork"]//@href'):
+        Tree = await get_content(URL + "work/ajax", data={"action": "work"}, return_url=True)
+        if not Tree.xpath('//*[@id="taskButtonWork"]//@href'):
             print("Worked successfully at", server)
         else:
             print("Couldn't work")
