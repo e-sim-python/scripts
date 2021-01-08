@@ -13,6 +13,7 @@ async def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gi
     for _ in range(int(restores)):
         restores_left -= 1
         try:
+            await login(server)
             try:
                 int(battle_id)  # user gave valid id
             except:
