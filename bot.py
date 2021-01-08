@@ -115,7 +115,7 @@ async def avatar(ctx, *, nick):
     if "," in nick:
         imgURL, nick = nick.split(",")
     else:
-        imgURL = "https://source.unsplash.com/random"
+        imgURL = "https://source.unsplash.com/random/150x150"
     await IsMyNick().convert(ctx, nick)
     await change_avatar.avatar(ctx.channel.name, imgURL.strip())
 
@@ -358,7 +358,7 @@ async def friends(ctx, *, nick: IsMyNick):
 
 @bot.command()
 async def medkit(ctx, *, nick: IsMyNick):
-    post_use = await get_content(f"https://{ctx.channel.name}.e-sim.org/medkit.html")
+    post_use = await get_content(f"https://{ctx.channel.name}.e-sim.org/medkit.html", login_first=True)
     await ctx.send(post_use)
 
 
