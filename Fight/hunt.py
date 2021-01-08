@@ -89,7 +89,7 @@ async def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         DamageDone = 0
                     return DamageDone
 
-                async def check(side, DamageDone):
+                async def check(side, DamageDone, should_continue):
                     tree = await get_content(f'{URL}battle.html?id={battle_id}')
                     hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
 
@@ -113,29 +113,30 @@ async def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                             return True
                     else:
                         if top1dmg < maxDmgForBh and condition:
-                            food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
-                            use = "eat" if food else "gift"
-                            await get_content(f"{URL}{use}.html", data={'quality': 5})
-                            try:
-                                await asyncio.sleep(battleScore["remainingTimeInSeconds"] - 13)
-                            except:
-                                pass
-                            battleScore = await get_content(
-                                f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1')
-                            if battleScore[f"{side.lower()}sOnline"]:
-                                await fight(side, DamageDone)
+                            if not should_continue:
+                                food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
+                                use = "eat" if food else "gift"
+                                await get_content(f"{URL}{use}.html", data={'quality': 5})
+                                try:
+                                    await asyncio.sleep(battleScore["remainingTimeInSeconds"] - 13)
+                                except:
+                                    pass
+                                battleScore = await get_content(
+                                    f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1')
+                                if battleScore[f"{side.lower()}sOnline"]:
+                                    await fight(side, DamageDone)
                             return False
                         return True
 
-                async def hunting(side, side_dmg):
+                async def hunting(side, side_dmg, should_continue):
                     DamageDone = 0
-                    c = await check(side.title(), DamageDone)
+                    c = await check(side.title(), DamageDone, should_continue)
                     while c:
                         DamageDone = await fight(side, DamageDone)
                         if not DamageDone:  # Done limits or error
                             break
                         if DamageDone > side_dmg:
-                            c = await check(side.title(), DamageDone)
+                            c = await check(side.title(), DamageDone, should_continue)
 
                 try:
                     aDMG = sorted(attacker.items(), key=lambda x: x[1], reverse=True)[0][1]
@@ -155,19 +156,19 @@ async def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                             except:
                                 print("I couldn't find the bonus region")
                                 continue
-                            await hunting("attacker", aDMG)
+                            await hunting("attacker", aDMG, dDMG < maxDmgForBh)
 
                         if dDMG < maxDmgForBh:
                             await fly(server, apiBattles['regionId'])
-                            await hunting("defender", dDMG)
+                            await hunting("defender", dDMG, aDMG < maxDmgForBh)
 
                     elif apiBattles['type'] == "RESISTANCE":
                         await fly(server, apiBattles['regionId'])
                         if aDMG < maxDmgForBh:
-                            await hunting("attacker", aDMG)
+                            await hunting("attacker", aDMG, dDMG < maxDmgForBh)
 
                         if dDMG < maxDmgForBh:
-                            await hunting("defender", dDMG)
+                            await hunting("defender", dDMG, aDMG < maxDmgForBh)
                     else:
                         continue
         except Exception as error:
