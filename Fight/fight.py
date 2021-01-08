@@ -17,7 +17,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
         print(f'side must be "defender" or "attacker" (not {side})')
         return
     dmg = int(dmg_or_hits.replace("k", "000"))
-    api = await get_content(link.replace("battle", "apiBattles").replace("id", "battleId"))
+    api = await get_content(link.replace("battle", "apiBattles").replace("id", "battleId"),first_run=True)
 
     tree = await get_content(link, login_first=True)
     food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
