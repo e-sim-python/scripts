@@ -1,6 +1,9 @@
 # todo: more converters (k - 000 f.e)
+# todo: default nick command.
+import asyncio
 from contextlib import redirect_stdout
 from io import StringIO
+from random import randint
 from typing import Optional
 
 import discord
@@ -8,7 +11,7 @@ from discord.ext import commands
 
 from Basic import *
 from Fight import *
-from Help_functions.login import get_nick_and_pw
+from Help_functions.login import get_content, get_nick_and_pw
 from Time_saver import *
 
 bot = commands.Bot(command_prefix=".", case_insensitive=True)
@@ -53,54 +56,54 @@ def add_docs_for(other_func):
 async def work(ctx, *, nick: IsMyNick):
     """`work+` -> for premium users"""
     queue = "+" if ctx.invoked_with.lower() == "work+" else ""
-    login.double_click(ctx.channel.name, queue)
+    await login.double_click(ctx.channel.name, queue)
 
 
 @bot.command()
 @add_docs_for(accept_contract.accept_contract)
 async def accept(ctx, contract_id, *, nick: IsMyNick):
-    accept_contract.accept_contract(ctx.channel.name, contract_id)
+    await accept_contract.accept_contract(ctx.channel.name, contract_id)
 
 
 @bot.command()
 @add_docs_for(battle_order.battle_order)
 async def bo(ctx, battle_link, side, *, nick: IsMyNick):
-    battle_order.battle_order(ctx.channel.name, battle_link, side)
+    await battle_order.battle_order(ctx.channel.name, battle_link, side)
 
 
 @bot.command()
 @add_docs_for(bid.bid_specific_auction)
-async def bid(ctx, auction_id_or_link, price, delay, *, nick: IsMyNick):
+async def Bid(ctx, auction_id_or_link, price, delay, *, nick: IsMyNick):
     if delay.lower() not in ("yes", "no"):
         await ctx.send(f"delay parameter must to be 'yes' or 'no' (not {delay})")
         return
     else:
         delay = True if delay.lower() == "yes" else False
-    bid.bid_specific_auction(ctx.channel.name, auction_id_or_link, price, delay)
+    await bid.bid_specific_auction(ctx.channel.name, auction_id_or_link, price, delay)
 
 
-@bot.command()
+@bot.command(aliases=["Buffs"])
 @add_docs_for(buff.buffs)
-async def buff(ctx, buffs_names, *, nick: IsMyNick):
-    buff.buffs(ctx.channel.name, buffs_names)
+async def Buff(ctx, buffs_names, *, nick: IsMyNick):
+    await buff.buffs(ctx.channel.name, buffs_names)
 
 
 @bot.command()
 @add_docs_for(buy_cc.cc)
 async def cc(ctx, country_id, max_price, buy_amount, *, nick: IsMyNick):
-    buy_cc.cc(ctx.channel.name, country_id, max_price, buy_amount)
+    await buy_cc.cc(ctx.channel.name, country_id, max_price, buy_amount)
 
 
 @bot.command()
 @add_docs_for(buy_product.products)
 async def buy(ctx, product, amount, *, nick: IsMyNick):
-    buy_product.products(ctx.channel.name, product, amount)
+    await buy_product.products(ctx.channel.name, product, amount)
 
 
 @bot.command()
 @add_docs_for(candidate.candidate)
-async def candidate(ctx, *, nick: IsMyNick):
-    candidate.candidate(ctx.channel.name)
+async def Candidate(ctx, *, nick: IsMyNick):
+    await candidate.candidate(ctx.channel.name)
 
 
 @bot.command()
@@ -114,7 +117,7 @@ async def avatar(ctx, *, nick):
     else:
         imgURL = "https://source.unsplash.com/random"
     await IsMyNick().convert(ctx, nick)
-    change_avatar.avatar(ctx.channel.name, imgURL.strip())
+    await change_avatar.avatar(ctx.channel.name, imgURL.strip())
 
 
 @bot.command()
@@ -124,9 +127,9 @@ async def comment(ctx, shout_or_article_link, body, *, nick: IsMyNick):
     - You can find shout link by clicking F12 in the page where you see the shout."""
     server = ctx.channel.name
     if "article" in shout_or_article_link:
-        comment_article.comment_article(server, shout_or_article_link.split("?id=")[1].split("&")[0], body)
+        await comment_article.comment_article(server, shout_or_article_link.split("?id=")[1].split("&")[0], body)
     elif "shout" in shout_or_article_link:
-        comment_shout.comment_shout(server, shout_or_article_link.split("?id=")[1].split("&")[0], body)
+        await comment_shout.comment_shout(server, shout_or_article_link.split("?id=")[1].split("&")[0], body)
     else:
         await ctx.send("Please provide a valid article/shout link.")
 
@@ -135,27 +138,27 @@ async def comment(ctx, shout_or_article_link, body, *, nick: IsMyNick):
 @add_docs_for(donate_eqs.donate_eqs)
 async def donate(ctx, ids, receiver_id: int, *, nick: IsMyNick):
     """`ids` MUST be separated by a comma, and without spaces (or with spaces, but within quotes)"""
-    donate_eqs.donate_eqs(ctx.channel.name, ids, receiver_id)
+    await donate_eqs.donate_eqs(ctx.channel.name, ids, receiver_id)
 
 
-@bot.command()
+@bot.command(aliases=["Eqs"])
 @add_docs_for(eqs.eqs)
 async def eq(ctx, *, nick: IsMyNick):
-    eqs.eqs(ctx.channel.name)
     # todo: aliases=["storage", "inventory"] (show all storage).
+    await eqs.eqs(ctx.channel.name)
 
 
 @bot.command()
 @add_docs_for(fly.fly)
 async def Fly(ctx, region_link_or_id, ticket_quality: Optional[int] = 5, *, nick: IsMyNick):
     """Default: Q5 tickets"""
-    fly.fly(ctx.channel.name, region_link_or_id, ticket_quality)
+    await fly.fly(ctx.channel.name, region_link_or_id, ticket_quality)
 
 
 @bot.command()
 @add_docs_for(job.job)
 async def Job(ctx, *, nick: IsMyNick):
-    job.job(ctx.channel.name)
+    await job.job(ctx.channel.name)
 
 
 @bot.command(aliases=["dow", "mpp"])
@@ -166,104 +169,104 @@ async def attack(ctx, ID: int, delay_or_battle_link, *, nick):
         nick = delay_or_battle_link + " " + nick
         delay_or_battle_link = ""
     await IsMyNick().convert(ctx, nick)
-    mpp_dow_attack.mpp_dow_attack(ctx.channel.name, ID, ctx.invoked_with.lower(), delay_or_battle_link)
+    await mpp_dow_attack.mpp_dow_attack(ctx.channel.name, ID, ctx.invoked_with.lower(), delay_or_battle_link)
 
 
 @bot.command()
 @add_docs_for(place_building.building)
 async def build(ctx, regionId, quality, Round, *, nick: IsMyNick):
     """`quality` = building quality (if you want to build an hospital instead, write like that: `5-hospital`)"""
-    place_building.building(ctx.channel.name, regionId, quality, Round)
+    await place_building.building(ctx.channel.name, regionId, quality, Round)
 
 
 @bot.command()
 @add_docs_for(read.read)
 async def Read(ctx, *, nick: IsMyNick):
-    read.read(ctx.channel.name)
+    await read.read(ctx.channel.name)
 
 
 @bot.command()
 @add_docs_for(register.register)
-async def Register(ctx, lan, countryId, password, *, nick: IsMyNick):
-    register.register(ctx.channel.name, nick, password, lan, countryId)
+async def Register(ctx, lan, countryId, *, nick: IsMyNick):
+    await register.register(ctx.channel.name, nick, get_nick_and_pw(server)[1], lan, countryId)
 
 
 @bot.command()
 @add_docs_for(report_citizen.report)
 async def report(ctx, target_id, report_reason, *, nick: IsMyNick):
     """`report_reason` MUST be within quotes"""
-    report_citizen.report(ctx.channel.name, target_id, report_reason)
+    await report_citizen.report(ctx.channel.name, target_id, report_reason)
 
 
 @bot.command(aliases=["upgrade"])
 @add_docs_for(reshuffle_or_upgrade.reshuffle_or_upgrade)
 async def reshuffle(ctx, eq_id_or_link, parameter, *, nick: IsMyNick):
     """`parameter` - it's recommended to copy and paste, but you can also write first/last"""
-    reshuffle_or_upgrade.reshuffle_or_upgrade(ctx.channel.name, ctx.invoked_with.lower(), eq_id_or_link, parameter)
+    await reshuffle_or_upgrade.reshuffle_or_upgrade(ctx.channel.name, ctx.invoked_with.lower(), eq_id_or_link, parameter)
 
 
 @bot.command()
 @add_docs_for(rw.rw)
 async def RW(ctx, region_id_or_link, ticket_quality: Optional[int] = 5, *, nick: IsMyNick):
-    rw.rw(ctx.channel.name, region_id_or_link, ticket_quality)
+    await rw.rw(ctx.channel.name, region_id_or_link, ticket_quality)
 
 
 @bot.command()
 @add_docs_for(sell_eqs.sell_eqs)
 async def sell(ctx, ids, price: float, hours: int, *, nick: IsMyNick):
     """`ids` MUST be separated by a comma, and without spaces (or with spaces, but within quotes)"""
-    sell_eqs.sell_eqs(ctx.channel.name, ids, price, hours)
+    await sell_eqs.sell_eqs(ctx.channel.name, ids, price, hours)
 
 
 @bot.command(aliases=["MU"])
 @add_docs_for(send_application.citizenship_or_mu_application)
 async def citizenship(ctx, country_or_mu_id: int, *, nick: IsMyNick):
-    send_application.citizenship_or_mu_application(ctx.channel.name, country_or_mu_id, ctx.invoked_with.lower())
+    await send_application.citizenship_or_mu_application(ctx.channel.name, country_or_mu_id, ctx.invoked_with.lower())
 
 
 @bot.command()
 @add_docs_for(send_msg.send_msg)
 async def msg(ctx, receiver_name, title, body, *, nick: IsMyNick):
     """If any arg (receiverName, title or body) containing more than 1 word - it must be within quotes"""
-    send_msg.send_msg(ctx.channel.name, receiver_name, title, body)
+    await send_msg.send_msg(ctx.channel.name, receiver_name, title, body)
 
 
 @bot.command()
 @add_docs_for(shout.shout)
 async def Shout(ctx, shout_body, *, nick: IsMyNick):
     """`shout_body` MUST be within quotes"""
-    shout.shout(ctx.channel.name, shout_body)
+    await shout.shout(ctx.channel.name, shout_body)
 
 
 @bot.command(aliases=["vote", "Vote_shout"])
 async def Sub(ctx, id: int, *, nick: IsMyNick):
     server = ctx.channel.name
     if ctx.invoked_with.lower() == "sub":
-        sub.sub(server, id)
+        await sub.sub(server, id)
     elif ctx.invoked_with.lower() == "vote":
-        vote_article.article(server, id)
+        await vote_article.article(server, id)
     elif ctx.invoked_with.lower() == "vote_shout":
-        vote_shout.vote_shout(server, id)
+        await vote_shout.vote_shout(server, id)
 
 
 @bot.command(aliases=["gift"])
 @add_docs_for(use.use)
 async def food(ctx, quality: Optional[int] = 5, *, nick: IsMyNick):
     """Default: Q5"""
-    use.use(ctx.channel.name, ctx.invoked_with.lower(), quality)
+    await use.use(ctx.channel.name, ctx.invoked_with.lower(), quality)
 
 
 @bot.command()
 @add_docs_for(vote_elections.elect)
 async def elect(ctx, your_candidate, *, nick: IsMyNick):
     """If `your_candidate` containing more than 1 word - it must be within quotes"""
-    vote_elections.elect(ctx.channel.name, your_candidate)
+    await vote_elections.elect(ctx.channel.name, your_candidate)
 
 
 @bot.command()
 @add_docs_for(vote_law.law)
 async def law(ctx, link_or_id, your_vote, *, nick: IsMyNick):
-    vote_law.law(ctx.channel.name, link_or_id, your_vote)
+    await vote_law.law(ctx.channel.name, link_or_id, your_vote)
 
 
 @bot.command(aliases=["unwear"])
@@ -271,7 +274,7 @@ async def wear(ctx, ids, *, nick: IsMyNick):
     """
     Wear/take off specific EQ IDs.
     `ids` MUST be separated by a comma, and without spaces (or with spaces, but within quotes)"""
-    wear_unwear.wear_unwear(ctx.channel.name, ids, "-" if ctx.invoked_with.lower() == "unwear" else "+")
+    await wear_unwear.wear_unwear(ctx.channel.name, ids, "-" if ctx.invoked_with.lower() == "unwear" else "+")
 
 
 @bot.command()
@@ -285,7 +288,8 @@ async def add(ctx, nick: IsMyNick, restores: int = "100", battle_id: int = 0,
     # Idea: control all those parameters via google spreadsheets or something (read the data with python).
     if side.lower() not in ("attacker", "defender"):
         return await ctx.send(f"'side' parameter must be attacker/defender only (not {side})")
-    auto_fight.auto_fight(ctx.channel.name, battle_id, side, wep, food, gift, restores)
+    await ctx.send("Ok sir!")
+    await auto_fight.auto_fight(ctx.channel.name, battle_id, side, wep, food, gift, restores)
 
 
 @bot.command()
@@ -295,16 +299,17 @@ async def Fight(ctx, nick: IsMyNick, link, side, weaponQuality: int = 5,
     """
     If `nick` containing more than 1 word - it must be within quotes.
     If you want to skip a parameter, you should write the default value.
-    Example: `.fight "My Nick" 100 "" attacker 0 5` - skip `battle_id` in order to change `food`"""
+        Example: `.fight "My Nick" 100 "" attacker 0 5` - skip `battle_id` in order to change `food`
+    - You can't stop it after it started to fight, so be careful with `dmg_or_hits` parameter"""
     link = link if link.startswith("http") else f"https://{ctx.channel.name}.e-sim.org/battle.html?id={link}"
-    fight.fight(link, side, weaponQuality, dmg_or_hits, ticketQuality)
+    await fight.fight(link, side, weaponQuality, dmg_or_hits, ticketQuality)
 
 
 @bot.command()
 @add_docs_for(hunt.hunt)
 async def Hunt(ctx, nick: IsMyNick, maxDmgForBh="500k", weaponQuality: int = 5, startTime: int = 60):
     """If `nick` containing more than 1 word - it must be within quotes."""
-    hunt.hunt(ctx.channel.name, maxDmgForBh, startTime, weaponQuality)
+    await hunt.hunt(ctx.channel.name, maxDmgForBh, startTime, weaponQuality)
 
 
 @bot.command()
@@ -312,10 +317,10 @@ async def Hunt(ctx, nick: IsMyNick, maxDmgForBh="500k", weaponQuality: int = 5, 
 async def hunt_battle(ctx, nick, link, side="attacker", max_dmg_for_bh: int = 1, weapon_quality: int = 0):
     """If `nick` containing more than 1 word - it must be within quotes."""
     link = link if link.startswith("http") else f"https://{ctx.channel.name}.e-sim.org/battle.html?id={link}"
-    hunt_specific_battle.hunt_specific_battle(link, side, max_dmg_for_bh, weapon_quality)
+    await hunt_specific_battle.hunt_specific_battle(link, side, max_dmg_for_bh, weapon_quality)
 
 
-@bot.command()
+@bot.command(aliases=["Motivates"])
 @add_docs_for(motivates.send_motivates)
 async def motivate(ctx, *, nick):
     """
@@ -326,14 +331,14 @@ async def motivate(ctx, *, nick):
     else:
         Type = "all"
     await IsMyNick().convert(ctx, nick.strip())
-    motivates.send_motivates(ctx.channel.name, Type.strip())
+    await motivates.send_motivates(ctx.channel.name, Type.strip())
 
 
 @bot.command()
 @add_docs_for(supply.supply)
 async def Supply(ctx, amount: int, quality: Optional[int] = 5, product="wep", *, nick: IsMyNick):
     product = f'{quality} {product}'
-    supply.supply(ctx.channel.name, amount, product)
+    await supply.supply(ctx.channel.name, amount, product)
 
 
 @bot.command()
@@ -342,13 +347,19 @@ async def Watch(ctx, nick, link, side, start_time: int = 60,
                 keep_wall="3kk", let_overkill="10kk", weaponQuality: int = 5):
     """If `nick` containing more than 1 word - it must be within quotes."""
     link = link if link.startswith("http") else f"https://{ctx.channel.name}.e-sim.org/battle.html?id={link}"
-    watch.watch(link, side, start_time, keep_wall, let_overkill, weaponQuality)
+    await watch.watch(link, side, start_time, keep_wall, let_overkill, weaponQuality)
 
 
 @bot.command(aliases=["friends+"])
 @add_docs_for(add_friends.friends)
 async def friends(ctx, *, nick: IsMyNick):
-    add_friends.friends(ctx.channel.name, "online" if ctx.invoked_with.lower() == "friends" else "all")
+    await add_friends.friends(ctx.channel.name, "online" if ctx.invoked_with.lower() == "friends" else "all")
+
+
+@bot.command()
+async def medkit(ctx, *, nick: IsMyNick):
+    post_use = await get_content(f"https://{ctx.channel.name}.e-sim.org/medkit.html")
+    await ctx.send(post_use)
 
 
 @bot.command()
@@ -360,26 +371,26 @@ async def merge(ctx, ids_or_Q, *, nick: IsMyNick):
     .merge 5 My Nick
     IMPORTANT NOTE: No spaces in `ids_or_Q`! only commas.
     """
-    merge_storage.merge(ctx.channel.name, ids_or_Q)
+    await merge_storage.merge(ctx.channel.name, ids_or_Q)
 
 
 @bot.command()
 async def Missions(ctx, *, nick: IsMyNick):
     """Finish all missions."""
-    missions.missions(ctx.channel.name)
+    await missions.missions(ctx.channel.name)
 
 
 @bot.command()
 @add_docs_for(sell_coins.mm)
 async def mm(ctx, *, nick: IsMyNick):
-    sell_coins.mm(ctx.channel.name)
+    await sell_coins.mm(ctx.channel.name)
 
 
 @bot.command()
 @add_docs_for(login.login)
 async def Login(ctx, *, nick: IsMyNick):
     """Should help you in error cases"""
-    login.login(ctx.channel.name)
+    await login.login(ctx.channel.name)
 
 
 @bot.command()
@@ -388,6 +399,18 @@ async def shutdown(ctx, *, nick: IsMyNick):
     Warning: It shutting down from all servers."""
     await ctx.send(f"**{nick}** shutted down")
     exit()
+
+
+@bot.command(aliases=["last"], hidden=True)
+async def ping(ctx, *, nicks):
+    """Shows who is connected to host"""
+    for nick in [x.strip() for x in nicks.split(",") if x.strip()]:
+        if nick.lower() == "all":
+            nick = MY_NICKS[ctx.server.name]
+            await asyncio.sleep(randint(1, 3))
+
+        if nick.lower() == MY_NICKS[ctx.server.name].lower():
+            await ctx.send(f'**{MY_NICKS[ctx.server.name]}** - online')
 
 
 @bot.event
