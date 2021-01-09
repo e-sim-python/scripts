@@ -96,7 +96,7 @@ cookies = {"user_agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Geck
 session = ClientSession(headers=headers)
 
 
-async def get_content(link, data=None, login_first=False, return_url=False, first_run=False):
+async def get_content(link, data=None, login_first=False, return_url=False):
     """
     Return types:
     Method post -> respond url (unless fight.html in link -> tree and url)
@@ -112,7 +112,7 @@ async def get_content(link, data=None, login_first=False, return_url=False, firs
 
     server = link.split("#")[0].replace("http://", "https://").split("https://")[1].split(".e-sim.org")[0]
     method = "get" if not data and "fight.html" not in link and "medkit.html" not in link else "post"
-    if login_first or first_run:
+    if login_first:
         await login(server)
     print(cookies)
     print(method)
