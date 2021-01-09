@@ -1,6 +1,7 @@
 import asyncio
 from random import randint
 
+import __init__  # For IDLE
 from Help_functions.bot_functions import fix_product_name
 from login import get_content
 

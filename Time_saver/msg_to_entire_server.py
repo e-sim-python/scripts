@@ -1,5 +1,6 @@
 import asyncio
 
+import __init__  # For IDLE
 from Help_functions.bot_functions import get_staff_list
 from login import get_content
 

@@ -1,6 +1,7 @@
 import asyncio
 import time
 
+import __init__  # For IDLE
 from Basic.fly import fly
 from login import get_content
 

@@ -1,5 +1,6 @@
 import asyncio
 
+import __init__  # For IDLE
 from Fight.supply import supply
 from login import get_content
 

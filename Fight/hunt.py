@@ -1,5 +1,6 @@
 import asyncio
 
+import __init__  # For IDLE
 from Basic.fly import fly
 from login import get_content, get_nick_and_pw
 
@@ -13,7 +14,7 @@ async def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
     maxDmgForBh, startTime = int(maxDmgForBh.replace("k", "000")), int(startTime)
     print(f"Startint to hunt at {server}.")
     nick = get_nick_and_pw(server)[0]
-    apiCitizen = await get_content(f"{URL}apiCitizenByName.html?name={nick.lower()}", first_run=True)
+    apiCitizen = await get_content(f"{URL}apiCitizenByName.html?name={nick.lower()}")
     apiRegions = await get_content(URL + "apiRegions.html")
     for _ in range(100):
         try:

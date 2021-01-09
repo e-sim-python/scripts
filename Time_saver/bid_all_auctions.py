@@ -1,6 +1,7 @@
 import asyncio
 from random import randint
 
+import __init__  # For IDLE
 from Help_functions.bot_functions import converting_raw_price_to_float, prices_helper, update_auctions_prices_from_csv
 from login import get_content
 

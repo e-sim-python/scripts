@@ -1,5 +1,6 @@
 import asyncio
 
+import __init__  # For IDLE
 from Help_functions.bot_functions import fix_product_name
 from login import get_content
 
@@ -7,7 +8,7 @@ from login import get_content
 async def products(server, product, amount):
     """Buy products at the LOCAL market (consider flying first)."""
     URL = f"https://{server}.e-sim.org/"
-    quality, product = await fix_product_name(product)
+    quality, product = fix_product_name(product)
     if not quality:
         quality = 5
     if not product:

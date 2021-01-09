@@ -1,6 +1,7 @@
 import asyncio
 import time
 
+import __init__  # For IDLE
 from Basic.fly import fly
 from login import get_content
 
@@ -24,7 +25,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
     gift_limit = tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
     food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
     gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
-    if weaponQuality != "0":
+    if int(weaponQuality):
         wep = tree.xpath(f'//*[@id="Q{weaponQuality}WeaponStock"]/text()')[0]
     else:
         wep = "unlimited"
@@ -52,7 +53,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
     Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
     for _ in range(100):
         if time.time() - start > int(start_time):
-            break  # round is over        
+            break  # round is over
 
         if Health < 50:
             if (not food or not int(food_limit)) and (not gift or not int(gift_limit)):
@@ -71,8 +72,8 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
             await get_content(f"{URL}{use}.html", data={'quality': 5})
         for _ in range(5):
             try:
-                tree, status = await get_content(
-                    f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}&value=Berserk")
+                data = {"weaponQuality": weaponQuality, "battleRoundId": hidden_id, "side": side, "value": "Berserk"}
+                tree, status = await get_content(f"{URL}fight.html", data=data)
                 Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                 Health = float(tree.xpath("//*[@id='healthUpdate']")[0].text.split()[0])
                 if dmg < 1000:
@@ -86,6 +87,8 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
                     break
                 print("Slow down")
                 await asyncio.sleep(2)
+        if not Damage:
+            break
         DamageDone += Damage
         hits_or_dmg = "hits" if dmg < 1000 else "dmg"
         if update % 4 == 0:

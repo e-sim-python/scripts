@@ -92,7 +92,7 @@ def get_nick_and_pw(server):
 
 
 headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
-cookies = {}
+cookies = {"user_agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 session = ClientSession(headers=headers)
 
 
@@ -114,8 +114,10 @@ async def get_content(link, data=None, login_first=False, return_url=False, firs
     method = "get" if not data and "fight.html" not in link and "medkit.html" not in link else "post"
     if login_first or first_run:
         await login(server)
-    async with session.get(link, cookies=cookies[server], headers=headers) if method == "get" else \
-               session.post(link, cookies=cookies[server], headers=headers, data=data) as respond:
+    print(cookies)
+    print(method)
+    async with session.get(link, cookies=cookies.get(server), headers=headers) if method == "get" else \
+               session.post(link, cookies=cookies.get(server), headers=headers, data=data) as respond:
         if method == "post":
             if "fight.html" in link:
                 return fromstring(await respond.text()), respond.status
@@ -129,12 +131,14 @@ async def get_content(link, data=None, login_first=False, return_url=False, firs
             return json_respond
 
 
-async def login(server):
+async def login(server, clear_cookies=False):
     """
     Saving cookies and user agent string in a local file (for later use), and replace the cookies if they are too old.
     """
     define_login_details()
     URL = f"https://{server}.e-sim.org/"
+    if clear_cookies and server in cookies:
+        del cookies[server]
     cookies_file_name = path.join(dir, 'cookies.txt')
     with open(cookies_file_name, 'r') as file:
         cookies.update(json.load(file))

@@ -1,6 +1,7 @@
 import asyncio
 from random import choice, randint
 
+import __init__  # For IDLE
 from Basic.fly import fly
 from Basic.job import job
 from Basic.sell_eqs import sell_eqs

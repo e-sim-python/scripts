@@ -7,7 +7,7 @@ from random import choice, randint
 from login import get_content, get_nick_and_pw
 
 
-async def fix_product_name(product):
+def fix_product_name(product):
     item = product.split()
     options = "iron, grain, oil, stone, wood, diamonds (diam), weapon (wep), house, gift, food, ticket, defense_system (DS), hospital, estate"
     Q = item[0].replace("Q", "").replace("q", "") if len(item) == 2 else None

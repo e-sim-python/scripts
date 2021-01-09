@@ -1,5 +1,6 @@
 import asyncio
 
+import __init__  # For IDLE
 from Basic.wear_unwear import wear_unwear
 from login import get_content
 

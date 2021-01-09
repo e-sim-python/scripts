@@ -5,6 +5,8 @@ from contextlib import redirect_stdout
 from io import StringIO
 from random import randint
 from typing import Optional
+from traceback import print_exception
+from sys import stderr
 
 import discord
 from discord.ext import commands
@@ -37,9 +39,9 @@ class IsMyNick(commands.Converter):
     async def convert(self, ctx, nick):
         if nick.lower() == MY_NICKS[ctx.channel.name].lower():
             return nick
-        raise 
-    
-    
+        raise
+
+
 def add_docs_for(other_func):
     def dec(func):
         if not other_func.__doc__:
@@ -202,7 +204,8 @@ async def report(ctx, target_id, report_reason, *, nick: IsMyNick):
 @add_docs_for(reshuffle_or_upgrade.reshuffle_or_upgrade)
 async def reshuffle(ctx, eq_id_or_link, parameter, *, nick: IsMyNick):
     """`parameter` - it's recommended to copy and paste, but you can also write first/last"""
-    await reshuffle_or_upgrade.reshuffle_or_upgrade(ctx.channel.name, ctx.invoked_with.lower(), eq_id_or_link, parameter)
+    await reshuffle_or_upgrade.reshuffle_or_upgrade(ctx.channel.name, ctx.invoked_with.lower(), eq_id_or_link,
+                                                    parameter)
 
 
 @bot.command()
@@ -390,7 +393,7 @@ async def mm(ctx, *, nick: IsMyNick):
 @add_docs_for(login.login)
 async def Login(ctx, *, nick: IsMyNick):
     """Should help you in error cases"""
-    await login.login(ctx.channel.name)
+    await login.login(ctx.channel.name, clear_cookies=True)
 
 
 @bot.command()
@@ -432,8 +435,8 @@ async def on_message(message):
         if output:
             if len(output) > 100 or "http" in output:
                 embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
-                for Index in range(len(output) // 1000 + 1):
-                    embed.add_field(name="Page 2", value=output[Index*1000:(Index+1)*1000])
+                for Index in range(len(output) // 1000 + 1)[:5]:
+                    embed.add_field(name="Page 2", value=output[Index * 1000:(Index + 1) * 1000])
                 # Sending the output (all prints) to your channel.
                 await ctx.send(embed=embed)
             else:
@@ -451,6 +454,8 @@ async def on_command_error(ctx, error):
         return await ctx.send("Sorry, you can't use this command in a private message!")
     if isinstance(error, commands.CommandNotFound):
         return
+    print('Ignoring exception in command {}:'.format(ctx.command), file=stderr)
+    print_exception(type(error), error, error.__traceback__, file=stderr)
     last_msg = str(list(await ctx.channel.history(limit=1).flatten())[0].content)
     error_msg = f'```{error}```'
     if error_msg != last_msg:

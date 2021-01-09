@@ -1,6 +1,5 @@
 import asyncio
-
-from login import get_content
+from datetime import datetime
 
 try:
     import pytz
@@ -8,7 +7,8 @@ try:
 except:
     print("We recommend installing pytz (pip install pytz) in order to get e-sim time")
     game_time = False
-from datetime import datetime
+
+from login import get_content
 
 
 async def elect(server, your_candidate):
