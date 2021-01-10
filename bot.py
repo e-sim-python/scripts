@@ -18,7 +18,7 @@ from Help_functions.login import get_content, get_nick_and_pw
 from Time_saver import *
 
 bot = commands.Bot(command_prefix=".", case_insensitive=True)
-YOUR_SECRET_TOKEN = "NjY1OTU1Nzc0MDM1NTI1NjU0.XhtJpQ.sDlMeI7Men3yIxDM71ZnANEnv-8"
+YOUR_SECRET_TOKEN = input("Your discord token (help - https://discordpy.readthedocs.io/en/latest/discord.html): ")
 # YOUR_SECRET_TOKEN = "NEc3NTE1MDcwNHjkIoYzNjA2.X7EjVg.6dQHDfwIRSoWf31KCQwI9euGeeY"
 
 # MY_NICKS = {"secura": "Some Nick",
