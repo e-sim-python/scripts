@@ -56,9 +56,11 @@ async def send_contracts(server, contract_id, contract_name):
     or if they are staff members"""
     URL = f"https://{server}.e-sim.org/"
     blacklist = await get_staff_list(URL)
-    blacklist = _do_not_send_twice(URL, blacklist, contract_name)
-    blacklist = _remove_rejected(URL, blacklist)
-    for Index, nick in enumerate(_get_friends_list(server)):
+    blacklist = await _do_not_send_twice(URL, blacklist, contract_name)
+    blacklist = await _remove_rejected(URL, blacklist)
+    Index = 0
+    async for nick in _get_friends_list(server):
+        Index += 1
         if nick not in blacklist:
             payload = {'id': contract_id, 'action': "PROPOSE", 'citizenProposedTo': nick, 'submit': 'Propose'}
             for _ in range(10):
