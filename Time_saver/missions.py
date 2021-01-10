@@ -209,7 +209,7 @@ async def missions(server, missions_to_complete="ALL", action="ALL"):
                 elif num == 60:
                     await friends(server, "online")
                 elif num == 63:
-                    await get_content(f"{URL}medkit.html")
+                    await get_content(f"{URL}medkit.html", data={})
                     # if food & gift limits >= 10 it won't work.
                 else:
                     print(f"I don't know how to finish this mission ({num}).")

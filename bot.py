@@ -13,11 +13,12 @@ from discord.ext import commands
 
 from Basic import *
 from Fight import *
+from Help_functions.bot_functions import random_sleep
 from Help_functions.login import get_content, get_nick_and_pw
 from Time_saver import *
 
 bot = commands.Bot(command_prefix=".", case_insensitive=True)
-YOUR_SECRET_TOKEN = input("Your discord token (help - https://discordpy.readthedocs.io/en/latest/discord.html): ")
+YOUR_SECRET_TOKEN = "NjY1OTU1Nzc0MDM1NTI1NjU0.XhtJpQ.sDlMeI7Men3yIxDM71ZnANEnv-8"
 # YOUR_SECRET_TOKEN = "NEc3NTE1MDcwNHjkIoYzNjA2.X7EjVg.6dQHDfwIRSoWf31KCQwI9euGeeY"
 
 # MY_NICKS = {"secura": "Some Nick",
@@ -98,8 +99,8 @@ async def cc(ctx, country_id, max_price, buy_amount, *, nick: IsMyNick):
 
 @bot.command()
 @add_docs_for(buy_product.products)
-async def buy(ctx, product, amount, *, nick: IsMyNick):
-    await buy_product.products(ctx.channel.name, product, amount)
+async def buy(ctx, amount: int, quality: Optional[int] = 5, product="wep", *, nick: IsMyNick):
+    await buy_product.products(ctx.channel.name, f'{quality} {product}', amount)
 
 
 @bot.command()
@@ -189,8 +190,8 @@ async def Read(ctx, *, nick: IsMyNick):
 
 @bot.command()
 @add_docs_for(register.register)
-async def Register(ctx, lan, countryId, *, nick: IsMyNick):
-    await register.register(ctx.channel.name, nick, get_nick_and_pw(server)[1], lan, countryId)
+async def Register(ctx, nick: IsMyNick, lan, countryId):
+    await register.register(ctx.channel.name, nick, get_nick_and_pw(ctx.channel.name)[1], lan, countryId)
 
 
 @bot.command()
@@ -282,7 +283,7 @@ async def wear(ctx, ids, *, nick: IsMyNick):
 
 @bot.command()
 @add_docs_for(auto_fight.auto_fight)
-async def add(ctx, nick: IsMyNick, restores: int = "100", battle_id: int = 0,
+async def add(ctx, nick: IsMyNick, restores: int = 100, battle_id: int = 0,
               side="attacker", wep: int = 0, food: int = 5, gift: int = 0):
     """
     If `nick` containing more than 1 word - it must be within quotes.
@@ -340,8 +341,7 @@ async def motivate(ctx, *, nick):
 @bot.command()
 @add_docs_for(supply.supply)
 async def Supply(ctx, amount: int, quality: Optional[int] = 5, product="wep", *, nick: IsMyNick):
-    product = f'{quality} {product}'
-    await supply.supply(ctx.channel.name, amount, product)
+    await supply.supply(ctx.channel.name, amount, f'{quality} {product}')
 
 
 @bot.command()
@@ -361,7 +361,7 @@ async def friends(ctx, *, nick: IsMyNick):
 
 @bot.command()
 async def medkit(ctx, *, nick: IsMyNick):
-    post_use = await get_content(f"https://{ctx.channel.name}.e-sim.org/medkit.html", login_first=True)
+    post_use = await get_content(f"https://{ctx.channel.name}.e-sim.org/medkit.html", data={}, login_first=True)
     await ctx.send(post_use)
 
 
@@ -404,6 +404,18 @@ async def shutdown(ctx, *, nick: IsMyNick):
     exit()
 
 
+@bot.command()
+async def limits(ctx, *, nick: IsMyNick):
+    URL = f"https://{ctx.server.name}.e-sim.org/"
+    tree = await get_content(URL, login_first=True)
+    gold = tree.xpath('//*[@id="userMenu"]//div//div[4]//div[1]/b/text()')[0]
+    food_limit = tree.xpath('//*[@id="foodQ5"]/text()')[0]
+    gift_limit = tree.xpath('//*[@id="giftQ5"]/text()')[0]
+    food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
+    gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
+    await ctx.send(f"Limits: {food}/{gift}. Storage: {food_limit}/{gift_limit}\n{gold} Gold.")
+
+
 @bot.command(aliases=["last"], hidden=True)
 async def ping(ctx, *, nicks):
     """Shows who is connected to host"""
@@ -436,13 +448,14 @@ async def on_message(message):
             if len(output) > 100 or "http" in output:
                 embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
                 for Index in range(len(output) // 1000 + 1)[:5]:
-                    embed.add_field(name="Page 2", value=output[Index * 1000:(Index + 1) * 1000])
+                    embed.add_field(name=f"Page {Index+1}", value=output[Index * 1000:(Index + 1) * 1000])
                 # Sending the output (all prints) to your channel.
                 await ctx.send(embed=embed)
             else:
                 # Short msg.
                 await ctx.send(output[:2000])
-        f.close()
+        f.truncate(0)
+        f.seek(0)
 
 
 @bot.event

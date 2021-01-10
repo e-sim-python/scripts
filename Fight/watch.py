@@ -88,7 +88,8 @@ async def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="1000
                 print("Done limits")
                 return
         else:
-            await get_content(f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}&value=Berserk")
+            data = {"weaponQuality": weaponQuality, "battleRoundId": hidden_id, "side": side, "value": "Berserk"}
+            await get_content(f"{URL}fight.html", data=data)
         if not int(food) and not int(gift) and not Health:
             print("Done limits")
             return

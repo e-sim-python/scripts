@@ -47,14 +47,18 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
     DamageDone = 0
     start_time = api["hoursRemaining"] * 3600 + api["minutesRemaining"] * 60 + api["secondsRemaining"]
     start = time.time()
-    update = 1
+    update = 0
     Damage = 0
     hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-    Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
     for _ in range(100):
         if time.time() - start > int(start_time):
             break  # round is over
-
+        tree = await get_content(link)
+        Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
+        food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
+        gift_limit = tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
+        food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
+        gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
         if Health < 50:
             if (not food or not int(food_limit)) and (not gift or not int(gift_limit)):
                 print("done limits")
@@ -87,7 +91,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
                     break
                 print("Slow down")
                 await asyncio.sleep(2)
-        if not Damage:
+        if not update:  # Error
             break
         DamageDone += Damage
         hits_or_dmg = "hits" if dmg < 1000 else "dmg"
@@ -100,7 +104,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
         if not food and not gift and not Health:
             use_medkit = input(f"Done limits. use medkit and continue (y/n)?")
             if use_medkit == "y":
-                await get_content(f"{URL}medkit.html")
+                await get_content(f"{URL}medkit.html", data={})
             else:
                 break
         await asyncio.sleep(1)

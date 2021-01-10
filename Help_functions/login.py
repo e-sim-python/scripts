@@ -111,11 +111,9 @@ async def get_content(link, data=None, login_first=False, return_url=False):
         login_first = False
 
     server = link.split("#")[0].replace("http://", "https://").split("https://")[1].split(".e-sim.org")[0]
-    method = "get" if not data and "fight.html" not in link and "medkit.html" not in link else "post"
+    method = "get" if data is None else "post"
     if login_first:
         await login(server)
-    print(cookies)
-    print(method)
     async with session.get(link, cookies=cookies.get(server), headers=headers) if method == "get" else \
                session.post(link, cookies=cookies.get(server), headers=headers, data=data) as respond:
         if method == "post":
@@ -137,12 +135,13 @@ async def login(server, clear_cookies=False):
     """
     define_login_details()
     URL = f"https://{server}.e-sim.org/"
+    cookies_file_name = path.join(dir, 'cookies.txt')
+    if server not in cookies:
+        with open(cookies_file_name, 'r') as file:
+            cookies.update(json.load(file))
     if clear_cookies and server in cookies:
         del cookies[server]
-    cookies_file_name = path.join(dir, 'cookies.txt')
-    with open(cookies_file_name, 'r') as file:
-        cookies.update(json.load(file))
-        user_agent = cookies["user_agent"]
+    user_agent = cookies.get("user_agent", 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0')
 
     headers.update({"User-Agent": user_agent, "Referer": f"{URL}index.html"})
     online_check = False

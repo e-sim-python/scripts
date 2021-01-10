@@ -69,13 +69,14 @@ async def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1')
                     Damage = 0
                     if server in dead_servers:
-                        value = "&value=Berserk" if battleScore["spectatorsOnline"] != 1 and Health >= 50 else ""
+                        value = "Berserk" if battleScore["spectatorsOnline"] != 1 and Health >= 50 else ""
                     else:
-                        value = "&value=Berserk"
+                        value = "Berserk"
                     for _ in range(5):
                         try:
-                            tree, _ = await get_content(
-                                f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}{value}")
+                            data = {"weaponQuality": weaponQuality, "battleRoundId": hidden_id, "side": side,
+                                    "value": value}
+                            tree, _ = await get_content(f"{URL}fight.html", data=data)
                             Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                             await asyncio.sleep(0.3)
                             break

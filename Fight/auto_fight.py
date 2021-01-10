@@ -14,7 +14,7 @@ async def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gi
     for _ in range(int(restores)):
         restores_left -= 1
         try:
-            if not battle_id.isdigit():
+            if not str(battle_id).replace("0", "").isdigit():
                 battle_id = await get_battle_id(server, battle_id)
             print(f'{URL}battle.html?id={battle_id} side: {side}')
             if not battle_id:

@@ -37,7 +37,8 @@ async def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0
             Damage = 0
             for _ in range(5):
                 try:
-                    tree, status = await get_content(f"{URL}fight.html?weaponQuality={weapon_quality}&battleRoundId={hidden_id}&side={side}")
+                    data = {"weaponQuality": weapon_quality, "battleRoundId": hidden_id, "side": side}
+                    tree, status = await get_content(f"{URL}fight.html", data=data)
                     Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                     break
                 except:

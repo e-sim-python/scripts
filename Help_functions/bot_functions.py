@@ -51,7 +51,7 @@ async def get_battle_id(server, battle_id):
             raise  # PRACTICE_BATTLE
         if battle_id == "event":
             tree = await get_content(f"{URL}battles.html?countryId={apiCitizen['citizenshipId']}&filter=EVENT")
-            for link in tree.xpath("//tr[position()<12]//td[1]//div[2]//@href"):
+            for link in tree.xpath("//tr[position()<12]//td[1]//div[2]//a/@href"):
                 link_id = link.split('=', 1)[1]
                 apiBattles = await get_content(f"{URL}apiBattles.html?battleId={link_id}")
                 if apiCitizen['citizenshipId'] in (apiBattles['attackerId'], apiBattles['defenderId']):
@@ -60,13 +60,13 @@ async def get_battle_id(server, battle_id):
 
         else:
             tree = await get_content(f"{URL}battles.html?countryId={occupantId}&filter=NORMAL")
-            battle_id = tree.xpath('//tr[2]//td[1]//div[2]//@href')
+            battle_id = tree.xpath('//tr//td[1]//div//div[2]//div[2]/a/@href')[0]
         if not battle_id:
             tree = await get_content(f"{URL}battles.html?countryId={occupantId}&filter=RESISTANCE")
-            battle_id = tree.xpath('//tr[2]//td[1]//div[2]//@href')
+            battle_id = tree.xpath('//tr//td[1]//div//div[2]//div[2]/a/@href')
     except:
         tree = await get_content(f"{URL}battles.html?filter=PRACTICE_BATTLE")
-        battle_id = tree.xpath('//tr[2]//td[1]//@href')
+        battle_id = tree.xpath('//tr[2]//td[1]//a/@href')
     battle_id = battle_id[0].replace("battle.html?id=", "") or None
     return battle_id
 
@@ -176,11 +176,12 @@ async def fighting(server, battle_id, side, wep):
             if not Health:
                 break
             if Health >= 50:
-                value = "&value=Berserk"
+                value = "Berserk"
             else:
                 value = ""
             hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-            await get_content(f"{URL}fight.html?weaponQuality={wep}&battleRoundId={hidden_id}&side={side}{value}")
+            data = {"weaponQuality": wep, "battleRoundId": hidden_id, "side": side, "value": value}
+            await get_content(f"{URL}fight.html", data=data)
             print(f"Hit {x}")
             await asyncio.sleep(randint(1, 2))
         except Exception as e:

@@ -55,7 +55,7 @@ async def send_contracts(server, contract_id, contract_name):
     Exceptions: If you have already sent them that contract, if they have rejected your previous one,
     or if they are staff members"""
     URL = f"https://{server}.e-sim.org/"
-    blacklist = get_staff_list(URL)
+    blacklist = await get_staff_list(URL)
     blacklist = _do_not_send_twice(URL, blacklist, contract_name)
     blacklist = _remove_rejected(URL, blacklist)
     for Index, nick in enumerate(_get_friends_list(server)):
