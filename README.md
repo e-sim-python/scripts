@@ -39,7 +39,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 			1. Download and Install [python 3.6+](https://www.python.org/downloads/) and [add to path](http://prntscr.com/uwvy5z). 
 			2. Open your CMD ( Command Line ), type `pip install eSim` then press enter and wait for everything to get installed on your computer.
 			3. Download the e-sim library as a zip file ([Code -> download ZIP](https://github.com/e-sim-python/scripts/archive/master.zip)) and extract it. (If you can't extract, [download WinRAR](https://www.rarlab.com/) first).
-			   Alternative, write `where python` in your CMD, and write `start` + `Lib\site-packages\eSim` instead of `python.exe` from the output.
+			   Alternative method, write `where python` in your CMD, and write `start` + `Lib\site-packages\eSim` instead of `python.exe` from the output. [SCREENSHOT](http://prntscr.com/wmwk0a)
 		- #### Usage:
 			- Head back to the folder you extracted in Step 2, **double click (in your computer) on any script you want**, or right click -> `open with IDLE` and `press F5` (better), or from `Run Menu` select `Run Module`
 			- *advanced usage* : import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/bot.py)).
