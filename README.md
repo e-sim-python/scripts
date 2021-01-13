@@ -2,8 +2,8 @@
 # E-sim python library
 [![Flag Counter](https://s01.flagcounter.com/mini/5j6R/bg_FFFFFF/txt_000000/border_CCCCCC/flags_0/)](https://info.flagcounter.com/5j6R)
 ##### Table of Content:
-1. [Introduction](https://github.com/e-sim-python/scripts#you-always-wanted-to-use-automated-software-but-did-not-have-the-necessary-knowledge)
-2. [Installation and usage](https://github.com/e-sim-python/scripts#usage)
+1. [Introduction](https://github.com/e-sim-python/scripts#introduction)
+2. [Installation and usage](https://github.com/e-sim-python/scripts#installation-and-usage)
 	1. [Installation]()
 		1. [PC]()
 			1. [Installing]()
@@ -34,16 +34,16 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 
 ## Installation and usage:
 - ### Installation:
-	- **PC Users**:
-		- **Installing**:
+	- #### PC Users:
+		- #### Installing:
 			1. Download and Install [python 3.6+](https://www.python.org/downloads/) and [add to path](http://prntscr.com/uwvy5z). 
 			2. Open your CMD ( Command Line ), type `pip install eSim` then press enter and wait for everything to get installed on your computer.
 			3. Download the e-sim library as a zip file ([Code -> download ZIP](https://github.com/e-sim-python/scripts/archive/master.zip)) and extract it. (If you can't extract, [download WinRAR](https://www.rarlab.com/) first)
-		- **Usage:**
+		- #### Usage:
 			- Head back to the folder you extracted in Step 2, `Double click (in your computer) on any script you want`, or right click -> `open with IDLE` and `Press F5` or from `Run Menu` select `Run Module`
 			- *advanced usage* : import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/bot.py)).
 	
-	- **Android users**:
+	- #### Android users:
 		1. Download the e-sim library as a zip file on your Android device from [Here](https://github.com/e-sim-python/scripts/releases) : [**Download Link**](https://github.com/e-sim-python/scripts/archive/aee27a71a54e8e7e2fc2b660611e122fe354fbe7.zip)
 		2. Extract the downloaded zip file.
 		3. Install **Pydroid 3 - IDE for Python 3** from Google Play Store.
