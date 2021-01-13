@@ -2,16 +2,16 @@
 # E-sim python library
 [![Flag Counter](https://s01.flagcounter.com/mini/5j6R/bg_FFFFFF/txt_000000/border_CCCCCC/flags_0/)](https://info.flagcounter.com/5j6R)
 #### Table of Content:
-1. [Introduction](https://github.com/e-sim-python/scripts/README.md#introduction)
-2. [Installation and usage](https://github.com/e-sim-python/scripts/README.md#installation-and-usage)
-	1. [Installation](https://github.com/e-sim-python/scripts/README.md#installation)
-		1. [PC](https://github.com/e-sim-python/scripts/README.md#pc-users)
-			1. [Installing](https://github.com/e-sim-python/scripts/README.md#installing)
-			2. [Usage](https://github.com/e-sim-python/scripts/EADME.md#usage)
-		2. [Android](https://github.com/e-sim-python/scripts/README.md#android-users)
-	3. [Notes](https://github.com/e-sim-python/scripts/README.md#few-notes)
-	4. [Customization and Advanced usage](https://github.com/e-sim-python/scripts/README.md#customization-and-advanced-usage)
-4. [Troubleshooting](https://github.com/e-sim-python/scripts/README.md#troubleshooting)
+1. [Introduction](https://github.com/e-sim-python/scripts#introduction)
+2. [Installation and usage](https://github.com/e-sim-python/scripts#installation-and-usage)
+	1. [Installation](https://github.com/e-sim-python/scripts#installation)
+		1. [PC](https://github.com/e-sim-python/scripts#pc-users)
+			1. [Installing](https://github.com/e-sim-python/scripts#installing)
+			2. [Usage](https://github.com/e-sim-python/scripts#usage)
+		2. [Android](https://github.com/e-sim-python/scripts#android-users)
+	3. [Notes](https://github.com/e-sim-python/scripts#few-notes)
+	4. [Customization and Advanced usage](https://github.com/e-sim-python/scripts#customization-and-advanced-usage)
+4. [Troubleshooting](https://github.com/e-sim-python/scripts#troubleshooting)
 
 ## Introduction
 #### You always wanted to use automated software, but did not have the necessary knowledge?
