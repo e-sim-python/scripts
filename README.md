@@ -77,6 +77,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 		
 ## Troubleshooting:
 - Make sure that you have python 3.6+ installed by typing `python --version` or `py --version` in CMD. [SCREENSHOT](http://prntscr.com/wmrbkn)
+- Q: "I've entered the wrong credentials, what can i do?" A: Open `Help_functions` folders, delete the `login_details.csv` file or Edit it with [notepad++](https://notepad-plus-plus.org/downloads/) if you know what you are doing.
 - First try to search for the solution online (copy the error to google).
 - For example: `ImportError: No module named aiohttp` -> [google search](https://www.google.com/search?q=No+module+named+aiohttp) will tell you how to install package (via pip). In that specific error you can also run [install_package.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py)
 - Sometimes all you need is to login via script again, because your cookies are too old (Run `Help/login`, or delete `Help/cookies.txt`).
