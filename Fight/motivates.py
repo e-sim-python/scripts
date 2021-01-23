@@ -55,8 +55,11 @@ async def send_motivates(server, Type="all"):
     newCitizens_tree = await get_content(URL + 'newCitizens.html?countryId=0')
     start_food = int(newCitizens_tree.xpath('//*[@id="foodLimit2"]')[0].text)
     citizenId = int(newCitizens_tree.xpath("//tr[2]//td[1]/a/@href")[0].split("=")[1])
+    checking = list()
     for _ in range(200):  # newest 200 players
         try:
+            if len(checking) >= 5:
+                break
             tree = await get_content(f'{URL}profile.html?id={citizenId}')
             current_food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
             if current_food - start_food == 5:
@@ -76,8 +79,9 @@ async def send_motivates(server, Type="all"):
             if tree.xpath('//*[@id="motivateCitizenButton"]'):
                 for num in storage:
                     payload = {'type': num, "submit": "Motivate", "id": citizenId}
-                    _, send = await get_content(f"{URL}motivateCitizen.html?id={citizenId}", data=payload)
+                    send = await get_content(f"{URL}motivateCitizen.html?id={citizenId}", data=payload)
                     if "&actionStatus=SUCCESFULLY_MOTIVATED" in str(send):
+                        checking.append(str(send))
                         print(send)
                         break
             citizenId -= 1

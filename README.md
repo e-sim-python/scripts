@@ -24,7 +24,7 @@
 	- Discord bot (control each of your trusted group accounts via commands)
 	- And much more!
 ---
-Currently there are 2 available versions of these scripts, which both of them does the same thing, but the lastest version is using **Asyncio** and **AIOHTTP** Library which is a non-blocking version of previous release for Discord bot usage, you can access both versions from this Link : [**Releases**](https://github.com/e-sim-python/scripts/releases)
+Currently, there are 2 available versions of these scripts, which both of them does the same thing, but the latest version is using **Asyncio** and **AIOHTTP** Library which is a non-blocking version of previous release for Discord bot usage, you can access both versions from this Link : [**Releases**](https://github.com/e-sim-python/scripts/releases)
 
 As far as we know, no one has ever been punished for using these scripts. However, the use is at your own risk, of course.
 
@@ -51,25 +51,26 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 		
 		4. Install **Pydroid repository plugin** from Google Play Store.
 		
-		5. Open **Pydroid 3**, from top left side of app, click on menu, there are a few options, such as Get premium, interpreter, Terminal, etc. Now you should choose **Pip**.
+		5. Open **Pydroid 3**, from top left side of app, click on the menu, there are a few options, such as Get premium, interpreter, Terminal, etc. Now you should choose **Pip**.
 		
 		6. In **Library name** field, first type **lxml** (its LXML not ixmi) and click on install, after its finished, enter **Requests** in that field and go ahead and click install. (you can do this for any missing module in future if you needed it)
 		
 		7. Now, just go back in main menu and click on folder icon in top right side of the app (near light bulb icon) and choose open, find your desired script in your phone file manager and open it.
 
 		8. Once you opened it, there should be a **Run yellowish play button** in left bottom of screen, go ahead and run it.
+		   
 		9. Now after you ran the script in your phone, on top right side of the screen, there is a menu. In that menu, choose **Take wakelock** and **Take wifilock**, Now it should be able to run as long as you don't close the app from your phone's app manager. [Screenshot](http://prntscr.com/uo9dxh)
 
 
 - ### Few Notes:
 	- You can edit the scripts by right click on it -> edit with IDLE, or click "Fork" at the top of this page.
 	- Everything written after the pound (#) in the same line, is a note that can help you understand the code, or for the developers.
-	- Every line with `input` can be replaces (instead of typing the same choice every time you run the script). For example: `server = input("Server: ")` can be replaced into `server = "alpha"`.
+	- Every line with `input` can be replaced (instead of typing the same choice every time you run the script). For example: `server = input("Server: ")` can be replaced into `server = "alpha"`.
 	- Those scripts (Basic folder mainly) are mostly raw, and they can be used in many other ways.
-	- in [Discord bot](https://github.com/e-sim-python/scripts/blob/master/bot.py), if you want to run command in a specific server, **Channel name should be the same as the server you want to run the command on**. (Ex: if it you wish to run command in alpha server, name of channel should be `alpha` [screenshot](http://prntscr.com/wmscov))
+	- in [Discord bot](https://github.com/e-sim-python/scripts/blob/master/bot.py), if you want to run command in a specific server, **Channel name should be the same as the server you want to run the command on**. (Ex: if you wish to run command in alpha server, name of channel should be `alpha` [screenshot](http://prntscr.com/wmscov))
 - ### Customization and Advanced usage:
 	- **Beginner idea:**
-		- Add `await asyncio.sleep(time_in_sconds)` at the beginning of the script to do action with a delay (For example: Bid auctions just before it's end, propose a law while you are sleeping etc.)
+		- Add `await asyncio.sleep(time_in_sconds)` at the beginning of the script to do action with a delay (For example: Bid auctions just before it ends, propose a law while you are sleeping etc.)
 
 	- **Advanced idea:**
 		- Run the [discord bot](https://github.com/e-sim-python/scripts/blob/master/bot.py) in each of your trusted group devices, and let everyone do specific actions in each other accounts (fight, vote laws etc.) (you should have `discord.py` installed already, but if not - install it)
@@ -82,7 +83,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 - For example: `ImportError: No module named aiohttp` -> [google search](https://www.google.com/search?q=No+module+named+aiohttp) will tell you how to install package (via pip). In that specific error you can also run [install_package.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py)
 - Sometimes all you need is to login via script again, because your cookies are too old (Run `Help/login`, or delete `Help/cookies.txt`).
 - See if there are updates in the source code. (`pip install -U eSim`)
-- If you believes that the error is made by us, you can describe it [here](https://github.com/e-sim-python/scripts/issues) and we will try to fix. This is also the place for suggestions and any contact.
+- If you believe that the error is made by us, you can describe it [here](https://github.com/e-sim-python/scripts/issues) and we will try to fix. This is also the place for suggestions and any contact.
 
 
 # Good luck & have fun!
