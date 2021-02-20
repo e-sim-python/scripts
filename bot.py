@@ -11,6 +11,7 @@ from sys import stderr
 import discord
 from discord.ext import commands
 
+import __init__ # For IDLE
 from Basic import *
 from Fight import *
 from Help_functions.bot_functions import random_sleep
@@ -141,7 +142,7 @@ async def comment(ctx, shout_or_article_link, body, *, nick: IsMyNick):
 @add_docs_for(donate_eqs.donate_eqs)
 async def donate(ctx, ids, receiver_id: int, *, nick: IsMyNick):
     """`ids` MUST be separated by a comma, and without spaces (or with spaces, but within quotes)"""
-    await donate_eqs.donate_eqs(ctx.channel.name, ids, receiver_id)
+    await donate_eqs.donate_eqs(ctx.channel.name, ids, str(receiver_id))
 
 
 @bot.command(aliases=["Eqs"])
@@ -172,7 +173,7 @@ async def attack(ctx, ID: int, delay_or_battle_link, *, nick):
         nick = delay_or_battle_link + " " + nick
         delay_or_battle_link = ""
     await IsMyNick().convert(ctx, nick)
-    await mpp_dow_attack.mpp_dow_attack(ctx.channel.name, ID, ctx.invoked_with.lower(), delay_or_battle_link)
+    await mpp_dow_attack.mpp_dow_attack(ctx.channel.name, str(ID), ctx.invoked_with.lower(), delay_or_battle_link)
 
 
 @bot.command()
@@ -313,7 +314,7 @@ async def Fight(ctx, nick: IsMyNick, link, side, weaponQuality: int = 5,
 @add_docs_for(hunt.hunt)
 async def Hunt(ctx, nick: IsMyNick, maxDmgForBh="500k", weaponQuality: int = 5, startTime: int = 60):
     """If `nick` containing more than 1 word - it must be within quotes."""
-    await hunt.hunt(ctx.channel.name, maxDmgForBh, startTime, weaponQuality)
+    await hunt.hunt(ctx.channel.name, maxDmgForBh, str(startTime), weaponQuality)
 
 
 @bot.command()
@@ -321,7 +322,7 @@ async def Hunt(ctx, nick: IsMyNick, maxDmgForBh="500k", weaponQuality: int = 5, 
 async def hunt_battle(ctx, nick, link, side="attacker", max_dmg_for_bh: int = 1, weapon_quality: int = 0):
     """If `nick` containing more than 1 word - it must be within quotes."""
     link = link if link.startswith("http") else f"https://{ctx.channel.name}.e-sim.org/battle.html?id={link}"
-    await hunt_specific_battle.hunt_specific_battle(link, side, max_dmg_for_bh, weapon_quality)
+    await hunt_specific_battle.hunt_specific_battle(link, side, str(max_dmg_for_bh), weapon_quality)
 
 
 @bot.command(aliases=["Motivates"])
@@ -341,7 +342,7 @@ async def motivate(ctx, *, nick):
 @bot.command()
 @add_docs_for(supply.supply)
 async def Supply(ctx, amount: int, quality: Optional[int] = 5, product="wep", *, nick: IsMyNick):
-    await supply.supply(ctx.channel.name, amount, f'{quality} {product}')
+    await supply.supply(ctx.channel.name, str(amount), f'{quality} {product}')
 
 
 @bot.command()
@@ -350,7 +351,7 @@ async def Watch(ctx, nick, link, side, start_time: int = 60,
                 keep_wall="3kk", let_overkill="10kk", weaponQuality: int = 5):
     """If `nick` containing more than 1 word - it must be within quotes."""
     link = link if link.startswith("http") else f"https://{ctx.channel.name}.e-sim.org/battle.html?id={link}"
-    await watch.watch(link, side, start_time, keep_wall, let_overkill, weaponQuality)
+    await watch.watch(link, side, str(start_time), keep_wall, let_overkill, weaponQuality)
 
 
 @bot.command(aliases=["friends+"])
