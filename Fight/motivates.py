@@ -65,13 +65,8 @@ async def send_motivates(server, Type="all"):
             if current_food - start_food == 5:
                 print("You have sent too many motivates today!")
                 break
-            today = int(tree.xpath('//*[@id="userMenu"]/div/div[1]/div/b[3]/text()')[0].split()[1])
-            try:
-                birthday = int(
-                    tree.xpath("//*[@id='profileTable']//tr//td[1]//div[2]//div[9]//span[1]/text()")[0].split()[1])
-            except:
-                birthday = int(
-                    tree.xpath("//*[@id='profileTable']//tr//td[1]//div[3]//div[9]//span[1]/text()")[0].split()[1])
+            today = int(tree.xpath('//*[@class="sidebar-clock"]/b/text()')[-1].split()[-1])
+            birthday = int(tree.xpath(f'//*[@class="profile-row" and span = "Birthday"]/span/text()')[0].split()[-1])
             if today - birthday > 3:
                 print("Checked all new players")
                 break
@@ -80,8 +75,8 @@ async def send_motivates(server, Type="all"):
                 for num in storage:
                     payload = {'type': num, "submit": "Motivate", "id": citizenId}
                     send = await get_content(f"{URL}motivateCitizen.html?id={citizenId}", data=payload)
-                    if "&actionStatus=SUCCESFULLY_MOTIVATED" in str(send):
-                        checking.append(str(send))
+                    if "&actionStatus=SUCCESFULLY_MOTIVATED" in send:
+                        checking.append(send)
                         print(send)
                         break
             citizenId -= 1
