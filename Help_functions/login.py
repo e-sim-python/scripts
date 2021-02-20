@@ -7,7 +7,7 @@ from aiohttp import ClientSession
 from lxml.html import fromstring
 
 dir = path.dirname(__file__)
-
+loop = asyncio.get_event_loop()
 
 def write_json(data, filename):
     with open(filename, 'w') as f:
@@ -93,8 +93,9 @@ def get_nick_and_pw(server):
 
 headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 cookies = {"user_agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
-session = ClientSession(headers=headers)
-
+async def create_session():
+    session = ClientSession(headers=headers)
+loop.create_task(create_session())
 
 async def get_content(link, data=None, login_first=False, return_url=False):
     """
@@ -194,7 +195,6 @@ async def double_click(server, queue=""):
 
 if __name__ == "__main__":
     print(define_login_details.__doc__)
-    loop = asyncio.get_event_loop()
     define_login_details()
     print(login.__doc__)
     print("write the servers you want to work and train in (separated by a comma)")
@@ -202,7 +202,6 @@ if __name__ == "__main__":
     if servers:
         servers = set(servers.split(","))  # random order
         for server in servers:
-
             loop.run_until_complete(
                 double_click(server.strip()))
     else:
