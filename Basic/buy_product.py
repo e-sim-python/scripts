@@ -13,6 +13,7 @@ async def products(server, product, amount):
         quality = 5
     if not product:
         return print("Invalid input")
+    amount = int(amount)
     MMBought = 0
     tree = await get_content(f"{URL}storage/money", login_first=True)
     keys = [x.strip() for x in tree.xpath("//div//div/text()") if x]
@@ -29,16 +30,14 @@ async def products(server, product, amount):
             mm_type = raw_cost[-1].strip()
             if mm_type in my_money:
                 MMBought = my_money[mm_type]
-        MM_needed = (int(amount) - productsBought) * cost if (int(
-            amount) - productsBought) <= stock else stock * cost
+        MM_needed = (amount - productsBought) * cost if (amount - productsBought) <= stock else stock * cost
         for _ in range(5):
             if MMBought >= MM_needed:
                 break
             tree1 = await get_content(URL + "monetaryMarket.html")
             ID = tree1.xpath("//tr[2]//td[4]//form[1]//input[@value][2]")[0].value
             CC_offer = float(tree1.xpath('//tr[2]//td[2]//b')[0].text)
-            cc_quantity = CC_offer if CC_offer < (int(amount) - productsBought) * cost else (int(
-                amount) - productsBought) * cost
+            cc_quantity = CC_offer if CC_offer < (amount - productsBought) * cost else (amount - productsBought) * cost
             # Todo: No gold case
             payload = {'action': "buy", 'id': ID, 'ammount': cc_quantity}
             url = await get_content(URL + "monetaryMarket.html", data=payload)
@@ -48,15 +47,15 @@ async def products(server, product, amount):
         quantity = int(MMBought / cost) - productsBought
         if quantity > stock:
             quantity = stock
-        if quantity > int(amount):
-            quantity = int(amount)
+        if quantity > amount:
+            quantity = amount
         payload = {'action': "buy", 'id': productId, 'quantity': quantity, "submit": "Buy"}
         url = await get_content(URL + "productMarket.html", data=payload)
         if "POST_PRODUCT_NOT_ENOUGH_MONEY" in str(url):
             break
         print(url)
         productsBought += quantity
-        if productsBought >= int(amount):
+        if productsBought >= amount:
             break
 
 if __name__ == "__main__":
