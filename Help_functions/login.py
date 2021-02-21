@@ -94,8 +94,8 @@ def get_nick_and_pw(server):
 headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 cookies = {"user_agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 async def create_session():
-    session = ClientSession(headers=headers)
-loop.create_task(create_session())
+    return ClientSession(headers=headers)
+session = loop.run_until_complete(create_session())
 
 async def get_content(link, data=None, login_first=False, return_url=False):
     """
