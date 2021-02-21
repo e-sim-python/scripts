@@ -42,13 +42,13 @@ async def send_motivates(server, Type="all"):
             storage.append(3)
 
     if not storage:
-        take_weaps = supply(server, 15, "Q1 wep")
+        take_weaps = await supply(server, 15, "Q1 wep")
         if take_weaps:
             storage.append(1)
-        take_food = supply(server, 10, "Q3 food")
+        take_food = await supply(server, 10, "Q3 food")
         if take_food:
             storage.append(2)
-        take_gift = supply(server, 5, "Q3 gift")
+        take_gift = await supply(server, 5, "Q3 gift")
         if take_gift:
             storage.append(3)
 
