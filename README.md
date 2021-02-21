@@ -40,9 +40,9 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 			2. Open your CMD ( Command Line ), type `pip install eSim` then press enter and wait for everything to get installed on your computer.
 			3. Download the e-sim library as a zip file ([Code -> download ZIP](https://github.com/e-sim-python/scripts/archive/master.zip)) and extract it. (If you can't extract, [download WinRAR](https://www.rarlab.com/) first.
 			   ##### Alternative methods: 
-			   - write `where python` in your CMD, and write `start` + `Lib\site-packages\eSim` instead of `python.exe` from the
+			   - Type `where python` in your CMD, and write `start` + `Lib\site-packages\eSim` instead of `python.exe` from the
 			   output. [SCREENSHOT](http://prntscr.com/wmwk0a).
-			   - as the last resort, you can use the `script.exe` in [Here](https://github.com/e-sim-python/scripts/releases/tag/v2.30)
+			   - As the last resort, you can use the `script.exe` in [Here](https://github.com/e-sim-python/scripts/releases/tag/v2.3)
 			   
 		- #### Usage:
 			- Head back to the folder you extracted in Step 3, **double click (in your computer) on any script you want**, or right click -> `open with IDLE` and `press F5` (better), or from `Run Menu` select `Run Module`
