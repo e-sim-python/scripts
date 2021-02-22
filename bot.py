@@ -407,7 +407,7 @@ async def shutdown(ctx, *, nick: IsMyNick):
 
 @bot.command()
 async def limits(ctx, *, nick: IsMyNick):
-    URL = f"https://{ctx.server.name}.e-sim.org/"
+    URL = f"https://{ctx.channel.name}.e-sim.org/"
     tree = await get_content(URL, login_first=True)
     gold = tree.xpath('//*[@id="userMenu"]//div//div[4]//div[1]/b/text()')[0]
     food_limit = tree.xpath('//*[@id="foodQ5"]/text()')[0]
