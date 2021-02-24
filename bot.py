@@ -11,7 +11,7 @@ from sys import stderr
 import discord
 from discord.ext import commands
 
-import __init__ # For IDLE
+import __init__  # For IDLE
 from Basic import *
 from Fight import *
 from Help_functions.bot_functions import random_sleep
@@ -148,8 +148,39 @@ async def donate(ctx, ids, receiver_id: int, *, nick: IsMyNick):
 @bot.command(aliases=["Eqs"])
 @add_docs_for(eqs.eqs)
 async def eq(ctx, *, nick: IsMyNick):
-    # todo: aliases=["storage", "inventory"] (show all storage).
     await eqs.eqs(ctx.channel.name)
+
+
+@bot.command(aliases=["inv"])
+@add_docs_for(inventory.Inventory)
+async def Inventroy(ctx, *, nick: IsMyNick):
+    Products, quantity = await inventory.Inventory(ctx=True, server=ctx.channel.name)
+    embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
+    for i in range(len(Products) // 5 + 1):
+        if i == 0:
+            name = "**Products: **"
+        else:
+            name = u"\u200B"
+        a = [f"**{a}**: {b}" for a, b in zip(Products[i * 5:(i + 1) * 5], quantity[i * 5:(i + 1) * 5])]
+        embed.add_field(name=name, value="\n".join(a))
+    embed.set_footer(text=f"Inventory")
+    await ctx.send(embed=embed)
+
+
+@bot.command(aliases=["muinv"])
+@add_docs_for(mu_inventory.MU_Inventory)
+async def Mu_inventroy(ctx, *, nick: IsMyNick):
+    Products, quantity = await mu_inventory.MU_Inventory(ctx=True, server=ctx.channel.name)
+    embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
+    for i in range(len(Products) // 5 + 1):
+        if i == 0:
+            name = "**Products: **"
+        else:
+            name = u"\u200B"
+        a = [f"**{a}**: {b}" for a, b in zip(Products[i * 5:(i + 1) * 5], quantity[i * 5:(i + 1) * 5])]
+        embed.add_field(name=name, value="\n".join(a))
+    embed.set_footer(text=f"Military Unit inventory")
+    await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -449,7 +480,7 @@ async def on_message(message):
             if len(output) > 100 or "http" in output:
                 embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
                 for Index in range(len(output) // 1000 + 1)[:5]:
-                    embed.add_field(name=f"Page {Index+1}", value=output[Index * 1000:(Index + 1) * 1000])
+                    embed.add_field(name=f"Page {Index + 1}", value=output[Index * 1000:(Index + 1) * 1000])
                 # Sending the output (all prints) to your channel.
                 await ctx.send(embed=embed)
             else:
