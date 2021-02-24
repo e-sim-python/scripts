@@ -157,7 +157,7 @@ async def muinv(ctx, *, nick: IsMyNick):
     products, quantity = await (inventory.Inventory if ctx.invoked_with.lower() == "inv" else mu_inventory.MU_Inventory)(
         ctx=True, server=ctx.channel.name)
     embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
-    for i in range(len(Products) // 5 + 1):
+    for i in range(len(products) // 5 + 1):
         value = [f"**{a}**: {b}" for a, b in zip(products[i * 5:(i + 1) * 5], quantity[i * 5:(i + 1) * 5])]
         embed.add_field(name="**Products: **" if not i else u"\u200B", value="\n".join(value))
     embed.set_footer(text="Inventory" if ctx.invoked_with.lower() == "inv" else "Military Unit inventory")
