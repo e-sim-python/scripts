@@ -153,33 +153,14 @@ async def eq(ctx, *, nick: IsMyNick):
 
 @bot.command(aliases=["inv"])
 @add_docs_for(inventory.Inventory)
-async def Inventroy(ctx, *, nick: IsMyNick):
-    Products, quantity = await inventory.Inventory(ctx=True, server=ctx.channel.name)
+async def muinv(ctx, *, nick: IsMyNick):
+    products, quantity = await (inventory.Inventory) if ctx.invoked_with.lower() == "inv" else (
+        mu_inventory.MU_Inventory)(ctx=True, server=ctx.channel.name)
     embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
     for i in range(len(Products) // 5 + 1):
-        if i == 0:
-            name = "**Products: **"
-        else:
-            name = u"\u200B"
-        a = [f"**{a}**: {b}" for a, b in zip(Products[i * 5:(i + 1) * 5], quantity[i * 5:(i + 1) * 5])]
-        embed.add_field(name=name, value="\n".join(a))
-    embed.set_footer(text=f"Inventory")
-    await ctx.send(embed=embed)
-
-
-@bot.command(aliases=["muinv"])
-@add_docs_for(mu_inventory.MU_Inventory)
-async def Mu_inventroy(ctx, *, nick: IsMyNick):
-    Products, quantity = await mu_inventory.MU_Inventory(ctx=True, server=ctx.channel.name)
-    embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
-    for i in range(len(Products) // 5 + 1):
-        if i == 0:
-            name = "**Products: **"
-        else:
-            name = u"\u200B"
-        a = [f"**{a}**: {b}" for a, b in zip(Products[i * 5:(i + 1) * 5], quantity[i * 5:(i + 1) * 5])]
-        embed.add_field(name=name, value="\n".join(a))
-    embed.set_footer(text=f"Military Unit inventory")
+        value = [f"**{a}**: {b}" for a, b in zip(products[i * 5:(i + 1) * 5], quantity[i * 5:(i + 1) * 5])]
+        embed.add_field(name="**Products: **" if not i else u"\u200B", value="\n".join(value))
+    embed.set_footer(text="Inventory" if ctx.invoked_with.lower() == "inv" else "Military Unit inventory")
     await ctx.send(embed=embed)
 
 
@@ -480,7 +461,7 @@ async def on_message(message):
             if len(output) > 100 or "http" in output:
                 embed = discord.Embed(title=MY_NICKS[ctx.channel.name])
                 for Index in range(len(output) // 1000 + 1)[:5]:
-                    embed.add_field(name=f"Page {Index + 1}", value=output[Index * 1000:(Index + 1) * 1000])
+                    embed.add_field(name=f"Page {Index + 1}" if Index else u"\u200B", value=output[Index * 1000:(Index + 1) * 1000])
                 # Sending the output (all prints) to your channel.
                 await ctx.send(embed=embed)
             else:
