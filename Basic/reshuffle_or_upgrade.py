@@ -17,11 +17,12 @@ async def reshuffle_or_upgrade(server, action, eq_id_or_link, parameter):
     ID = str(eq_id_or_link).replace(f"{URL}showEquipment.html?id=", "")  # link case
     LINK = f"{URL}showEquipment.html?id={ID}"
     tree = await get_content(LINK, login_first=True)
-    eq = tree.xpath('//*[@id="esim-layout"]//div/text()')
-    if parameter in eq[1] or parameter == "first":
-        parameterId = int(ID) * 2
-    elif parameter in eq[2] or parameter == "last":
-        parameterId = int(ID) * 2 - 1
+    eq = tree.xpath('//*[@id="esim-layout"]//div/div[4]/div/h4/text()')
+    parameterId = tree.xpath('//*[@id="esim-layout"]//div/div[4]/div/h3/text()')
+    if parameter in eq[0].replace("by  ","by ") or parameter == "first":
+        parameterId = parameterId[0].split("#")[1]
+    elif parameter in eq[1].replace("by  ","by ") or parameter == "last":
+        parameterId = parameterId[1].split("#")[1]
     else:
         print(f"Did not find parameter {parameter} at {LINK}. Try copy & paste.")
         return
