@@ -45,6 +45,7 @@ async def Inventory(server, ctx=None):
                 "//cdn.e-sim.org//img/productIcons/", "").replace(".png", "")
         products.append(f"{quality.title()} {name}" if quality else f"{name}")
     if ctx is None:
+        from tabulate import tabulate
         print(tabulate(zip(products, quantity), headers=["Product", "Quantity"], tablefmt='grid',
                        colalign=("left", "center"), showindex=False))
     else:
