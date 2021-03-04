@@ -1,7 +1,7 @@
 import asyncio
 
-from Help_functions.bot_functions import random_sleep, location
 from login import get_content
+from Help_functions.bot_functions import random_sleep, location
 
 
 async def fly(server, region_id, ticket_quality="5"):
