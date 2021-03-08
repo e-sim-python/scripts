@@ -165,7 +165,12 @@ async def prices_helper(file_name):
         if Help == "1":
             await auctions_csv_helper(file_name)
 
-
+def convert_to_dict(s):
+    s_list = s.replace("'", '').split("&")
+    s_list[0] = f"ip={s_list[0]}"
+    return dict([a.split("=") for a in s_list])
+                                   
+                                   
 async def fighting(server, battle_id, side, wep):
     URL = f"https://{server}.e-sim.org/"
 
@@ -181,7 +186,8 @@ async def fighting(server, battle_id, side, wep):
                 value = ""
             hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
             data = {"weaponQuality": wep, "battleRoundId": hidden_id, "side": side, "value": value}
-            await get_content(f"{URL}fight.html", data=data)
+            data.update(convert_to_dict("".join(tree.xpath("//script[3]/text()")).split("&ip=")[1].split(";")[0]))
+            await get_content(f"{URL}fight395791.html", data=data)
             print(f"Hit {x}")
             await asyncio.sleep(randint(1, 2))
         except Exception as e:
