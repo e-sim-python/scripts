@@ -115,8 +115,8 @@ async def get_content(link, data=None, login_first=False, return_url=False):
     method = "get" if data is None else "post"
     if login_first:
         await login(server)
-    async with session.get(link, cookies=cookies.get(server), headers=headers) if method == "get" else \
-               session.post(link, cookies=cookies.get(server), headers=headers, data=data) as respond:
+    async with session.get(link, cookies=cookies.get(server), headers=headers, ssl=server!="vita") if method == "get" else \
+               session.post(link, cookies=cookies.get(server), headers=headers, data=data, ssl=server!="vita") as respond:
         if method == "post":
             if "fight.html" in link:
                 return fromstring(await respond.text()), respond.status
@@ -147,13 +147,13 @@ async def login(server, clear_cookies=False):
     headers.update({"User-Agent": user_agent, "Referer": f"{URL}index.html"})
     online_check = False
     if server in cookies:
-        online_check = await session.get(URL + "storage.html", cookies=cookies[server], headers=headers)
+        online_check = await session.get(URL + "storage.html", cookies=cookies[server], headers=headers, ssl=server!="vita")
         online_check = "notLoggedIn" in str(online_check.url) or "error" in str(online_check.url)
     if online_check or server not in cookies:
         nick, password = get_nick_and_pw(server)
         payload = {'login': nick, 'password': password, "submit": "Login"}
-        async with session.get(URL, headers=headers) as _:
-            async with session.post(URL + "login.html", headers=headers, data=payload) as r:
+        async with session.get(URL, headers=headers, ssl=server!="vita") as _:
+            async with session.post(URL + "login.html", headers=headers, data=payload, ssl=server!="vita") as r:
                 if "index.html?act=login" not in str(r.url):
                     print(r.url)
                     print("Login problem. check your nick and password and try again")
