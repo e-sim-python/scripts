@@ -41,9 +41,8 @@ async def get_battle_id(server, battle_id):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
     apiCitizen = await get_content(f"{URL}apiCitizenByName.html?name={nick.lower()}")
-    currentLocationRegionId = apiCitizen['currentLocationRegionId']
     for row in await get_content(f'{URL}apiMap.html'):
-        if row['regionId'] == currentLocationRegionId:
+        if row['regionId'] == apiCitizen['currentLocationRegionId']:
             occupantId = row['occupantId']
             break
     try:
@@ -52,7 +51,7 @@ async def get_battle_id(server, battle_id):
         if battle_id == "event":
             tree = await get_content(f"{URL}battles.html?countryId={apiCitizen['citizenshipId']}&filter=EVENT")
             for link in tree.xpath("//tr[position()<12]//td[1]//div[2]//a/@href"):
-                link_id = link.split('=', 1)[1]
+                link_id = link.split('=')[1]
                 apiBattles = await get_content(f"{URL}apiBattles.html?battleId={link_id}")
                 if apiCitizen['citizenshipId'] in (apiBattles['attackerId'], apiBattles['defenderId']):
                     battle_id = link_id
@@ -60,7 +59,7 @@ async def get_battle_id(server, battle_id):
 
         else:
             tree = await get_content(f"{URL}battles.html?countryId={occupantId}&filter=NORMAL")
-            battle_id = tree.xpath('//tr//td[1]//div//div[2]//div[2]/a/@href')[0]
+            battle_id = tree.xpath('//tr//td[1]//div//div[2]//div[2]/a/@href')
         if not battle_id:
             tree = await get_content(f"{URL}battles.html?countryId={occupantId}&filter=RESISTANCE")
             battle_id = tree.xpath('//tr//td[1]//div//div[2]//div[2]/a/@href')
@@ -201,5 +200,4 @@ async def location(server):
     nick = get_nick_and_pw(server)[0]
     await asyncio.sleep(randint(1, 2))
     apiCitizen = await get_content(f"{URL}apiCitizenByName.html?name={nick.lower()}")
-    currentLocationRegionId = apiCitizen['currentLocationRegionId']
-    return currentLocationRegionId
+    return apiCitizen['currentLocationRegionId']
