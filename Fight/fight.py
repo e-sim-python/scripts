@@ -3,6 +3,7 @@ import time
 
 import __init__  # For IDLE
 from Basic.fly import fly
+from Help_functions.bot_functions import send_fight_request
 from login import get_content
 
 
@@ -49,7 +50,6 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
     start = time.time()
     update = 0
     Damage = 0
-    hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
     for _ in range(100):
         if time.time() - start > int(start_time):
             break  # round is over
@@ -76,8 +76,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
             await get_content(f"{URL}{use}.html", data={'quality': 5})
         for _ in range(5):
             try:
-                data = {"weaponQuality": weaponQuality, "battleRoundId": hidden_id, "side": side, "value": "Berserk"}
-                tree, status = await get_content(f"{URL}fight.html", data=data)
+                tree, status = await send_fight_request(URL, tree, weaponQuality, side)
                 Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                 Health = float(tree.xpath("//*[@id='healthUpdate']")[0].text.split()[0])
                 if dmg < 1000:

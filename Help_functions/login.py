@@ -100,10 +100,9 @@ session = loop.run_until_complete(create_session())
 async def get_content(link, data=None, login_first=False, return_url=False):
     """
     Return types:
-    Method post -> respond url (unless fight.html in link -> tree and url)
+    Method post -> respond url (unless fight in link -> tree and url)
     html -> tree (unless return_url is True -> respond url)
     api -> json
-    fight.html
     """
     if "api" not in link:
         return_type = "html"
@@ -118,7 +117,7 @@ async def get_content(link, data=None, login_first=False, return_url=False):
     async with session.get(link, cookies=cookies.get(server), headers=headers, ssl=server!="vita") if method == "get" else \
                session.post(link, cookies=cookies.get(server), headers=headers, data=data, ssl=server!="vita") as respond:
         if method == "post":
-            if "fight.html" in link:
+            if "fight" in link:
                 return fromstring(await respond.text()), respond.status
             return str(respond.url) if not return_url else fromstring(await respond.text())
         if return_type == "html":

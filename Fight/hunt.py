@@ -2,6 +2,7 @@ import asyncio
 
 import __init__  # For IDLE
 from Basic.fly import fly
+from Help_functions.bot_functions import send_fight_request
 from login import get_content, get_nick_and_pw
 
 
@@ -74,9 +75,7 @@ async def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                         value = "Berserk"
                     for _ in range(5):
                         try:
-                            data = {"weaponQuality": weaponQuality, "battleRoundId": hidden_id, "side": side,
-                                    "value": value}
-                            tree, _ = await get_content(f"{URL}fight.html", data=data)
+                            tree, _ = await send_fight_request(URL, tree, weaponQuality, side, value)
                             Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                             await asyncio.sleep(0.3)
                             break

@@ -3,6 +3,7 @@ import time
 
 import __init__  # For IDLE
 from Basic.fly import fly
+from Help_functions.bot_functions import send_fight_request
 from login import get_content
 
 
@@ -88,8 +89,8 @@ async def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="1000
                 print("Done limits")
                 return
         else:
-            data = {"weaponQuality": weaponQuality, "battleRoundId": hidden_id, "side": side, "value": "Berserk"}
-            await get_content(f"{URL}fight.html", data=data)
+            await send_fight_request(URL, tree, weaponQuality, side)
+
         if not int(food) and not int(gift) and not Health:
             print("Done limits")
             return

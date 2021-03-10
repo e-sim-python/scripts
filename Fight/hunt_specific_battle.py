@@ -1,6 +1,8 @@
 import asyncio
 from random import randint
 
+import __init__  # For IDLE
+from Help_functions.bot_functions import send_fight_request
 from login import get_content
 
 
@@ -25,7 +27,6 @@ async def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0
         DamageDone = 0
         while DamageDone < int(max_dmg_for_bh):
             Health = int(float(str(tree.xpath("//*[@id='actualHealth']")[0].text)))
-            hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
             food = tree.xpath('//*[@id="foodLimit2"]')[0].text
             food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
             gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
@@ -37,8 +38,7 @@ async def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0
             Damage = 0
             for _ in range(5):
                 try:
-                    data = {"weaponQuality": weapon_quality, "battleRoundId": hidden_id, "side": side}
-                    tree, status = await get_content(f"{URL}fight.html", data=data)
+                    tree, status = await send_fight_request(URL, tree, weapon_quality, side)
                     Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                     break
                 except:

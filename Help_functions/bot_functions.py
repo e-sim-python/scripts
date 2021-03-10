@@ -164,6 +164,7 @@ async def prices_helper(file_name):
         if Help == "1":
             await auctions_csv_helper(file_name)
 
+
 def convert_to_dict(s):
     s_list = s.replace("'", '').split("&")
     s_list[0] = f"ip={s_list[0]}"
@@ -179,20 +180,20 @@ async def fighting(server, battle_id, side, wep):
             Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
             if not Health:
                 break
-            if Health >= 50:
-                value = "Berserk"
-            else:
-                value = ""
-            hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-            data = {"weaponQuality": wep, "battleRoundId": hidden_id, "side": side, "value": value}
-            data.update(convert_to_dict("".join(tree.xpath("//script[3]/text()")).split("&ip=")[1].split(";")[0]))
-            await get_content(f"{URL}fight395791.html", data=data)
+            value = "Berserk" if Health >= 50 else ""
+            await send_fight_request(URL, tree, wep, side, value)
             print(f"Hit {x}")
             await asyncio.sleep(randint(1, 2))
         except Exception as e:
             print(e)
             await asyncio.sleep(randint(2, 5))
 
+
+async def send_fight_request(URL, tree, wep, side, value="Berserk"):
+    hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
+    data = {"weaponQuality": wep, "battleRoundId": hidden_id, "side": side, "value": value}
+    data.update(convert_to_dict("".join(tree.xpath("//script[3]/text()")).split("&ip=")[1].split(";")[0]))
+    return await get_content(f"{URL}fight395791.html", data=data)
 
 async def location(server):
     """getting current location"""
