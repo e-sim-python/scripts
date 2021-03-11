@@ -65,7 +65,7 @@ def define_login_details(nick="", password="", server=""):
 
 def get_nick_and_pw(server):
     nick, password = "", ""
-    file_name = path.join(dir, 'login_details.csv')
+    file_name = path.join(directory, 'login_details.csv')
     all_nicks = {}
     while 1:
         if path.isfile(file_name):
