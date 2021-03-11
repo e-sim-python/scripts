@@ -6,7 +6,7 @@ from os import path
 from aiohttp import ClientSession
 from lxml.html import fromstring
 
-dir = path.dirname(__file__)
+directory = path.dirname(__file__)
 loop = asyncio.get_event_loop()
 
 def write_json(data, filename):
@@ -16,7 +16,7 @@ def write_json(data, filename):
 
 def define_login_details(nick="", password="", server=""):
     """Saving nicks, passwords for each server from the user, for later use."""
-    file_name = path.join(dir, 'login_details.csv')
+    file_name = path.join(directory, 'login_details.csv')
     if nick and password and server:
         file_exist = path.isfile(file_name)
         with open(file_name, 'a', newline='') as csvFile:
@@ -48,7 +48,7 @@ def define_login_details(nick="", password="", server=""):
                     password = new_password
                 writer.writerow([server, nick, password])
 
-    cookies_file_name = path.join(dir, 'cookies.txt')
+    cookies_file_name = path.join(directory, 'cookies.txt')
     if not path.isfile(cookies_file_name):
         write_json({}, cookies_file_name)
     with open(cookies_file_name, 'r') as file:
@@ -118,10 +118,10 @@ async def get_content(link, data=None, login_first=False, return_url=False):
                session.post(link, cookies=cookies.get(server), headers=headers, data=data, ssl=server!="vita") as respond:
         if method == "post":
             if "fight" in link:
-                return fromstring(await respond.text()), respond.status
-            return str(respond.url) if not return_url else fromstring(await respond.text())
+                return fromstring(await respond.text(encoding='utf-8')), respond.status
+            return str(respond.url) if not return_url else fromstring(await respond.text(encoding='utf-8'))
         if return_type == "html":
-            return fromstring(await respond.text()) if not return_url else str(respond.url)
+            return fromstring(await respond.text(encoding='utf-8')) if not return_url else str(respond.url)
         else:
             json_respond = await respond.json(content_type=None)
             if "apiBattles" in link:
@@ -135,7 +135,7 @@ async def login(server, clear_cookies=False):
     """
     define_login_details()
     URL = f"https://{server}.e-sim.org/"
-    cookies_file_name = path.join(dir, 'cookies.txt')
+    cookies_file_name = path.join(directory, 'cookies.txt')
     if server not in cookies:
         with open(cookies_file_name, 'r') as file:
             cookies.update(json.load(file))
@@ -204,7 +204,7 @@ if __name__ == "__main__":
             loop.run_until_complete(
                 double_click(server.strip()))
     else:
-        with open(path.join(dir, 'login_details.csv'), 'r') as file:
+        with open(path.join(directory, 'login_details.csv'), 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 if row[0] != "Server":
