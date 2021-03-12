@@ -49,7 +49,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 			- *advanced usage* : import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/bot.py)).
 	
 	- #### Android users:
-		1. Download the e-sim library as a zip file on your Android device from [Here](https://github.com/e-sim-python/scripts/releases) : [**Download Link**](https://github.com/e-sim-python/scripts/archive/aee27a71a54e8e7e2fc2b660611e122fe354fbe7.zip)
+		1. Download the e-sim library as a zip file on your Android device from [Here](https://github.com/e-sim-python/scripts/releases) **Download `Android.zip` From Assests**
 		2. Extract the downloaded zip file.
 		3. Install **Pydroid 3 - IDE for Python 3** from Google Play Store.
 		
