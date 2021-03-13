@@ -1,6 +1,7 @@
 from login import login, get_nick_and_pw
 import __init__
 from Basic.fly import fly
+from Help_functions._bot_functions import send_fight_request
 
 from lxml.html import fromstring
 import requests
@@ -55,23 +56,23 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
 
             def fight(side, DamageDone, session):
                 battle = session.get(f'{URL}battle.html?id={battle_id}')
-                tree = fromstring(battle.content)
-                Health = int(float(str(tree.xpath("//*[@id='actualHealth']")[0].text)))
-                hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-                food = int(tree.xpath('//*[@id="foodLimit2"]')[0].text)
-                gift = int(tree.xpath('//*[@id="giftLimit2"]')[0].text)
+                Main_tree = fromstring(battle.content)
+                Health = int(float(str(Main_tree.xpath("//*[@id='actualHealth']")[0].text)))
+                hidden_id = Main_tree.xpath("//*[@id='battleRoundId']")[0].value
+                food = int(Main_tree.xpath('//*[@id="foodLimit2"]')[0].text)
+                gift = int(Main_tree.xpath('//*[@id="giftLimit2"]')[0].text)
                 if Health < 50:
                     use = "eat" if food else "gift"
                     session.post(f"{URL}{use}.html", data={'quality': 5})
                 battleScore = session.get(f'{URL}battleScore.html?id={hidden_id}&at={apiCitizen["id"]}&ci={apiCitizen["citizenshipId"]}&premium=1').json()
                 Damage = 0
                 if server in dead_servers:
-                    value = "&value=Berserk" if battleScore["spectatorsOnline"] != 1 and Health >= 50 else ""
+                    value = "Berserk" if battleScore["spectatorsOnline"] != 1 and Health >= 50 else ""
                 else:
-                    value = "&value=Berserk"
+                    value = "Berserk"
                 for _ in range(5):
                     try:
-                        f = session.post(f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}{value}")
+                        f = send_fight_request(session, URL, Main_tree, weaponQuality, side, value)
                         tree = fromstring(f.content)
                         Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                         time.sleep(0.3)

@@ -1,10 +1,12 @@
 from login import login
 import __init__
 from Basic.fly import fly
+from Help_functions._bot_functions import send_fight_request
 
 import requests
 from lxml.html import fromstring
 import time
+
 
 def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5", session=""):
     """
@@ -23,13 +25,13 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
         session = login(server)
     r = session.get(link)
     print(r.url)
-    tree = fromstring(r.content)
-    food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
-    gift_limit = tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
-    food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
-    gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
+    main_tree = fromstring(r.content)
+    food_limit = main_tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
+    gift_limit = main_tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
+    food = int(float(main_tree.xpath('//*[@id="foodLimit2"]')[0].text))
+    gift = int(float(main_tree.xpath('//*[@id="giftLimit2"]')[0].text))
     if weaponQuality != "0":
-        wep = tree.xpath(f'//*[@id="Q{weaponQuality}WeaponStock"]/text()')[0]
+        wep = main_tree.xpath(f'//*[@id="Q{weaponQuality}WeaponStock"]/text()')[0]
     else:
         wep = "unlimited"
 
@@ -54,8 +56,7 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
     start = time.time()
     update = 1
     Damage = 0
-    hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-    Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
+    Health = int(float(main_tree.xpath('//*[@id="actualHealth"]')[0].text))
     while 1:
         if time.time() - start > int(start_time):
             break  # round is over        
@@ -77,8 +78,7 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
             session.post(f"{URL}{use}.html", data={'quality': 5})
         for _ in range(5):
             try:
-                post_hit = session.post(
-                    f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}&value=Berserk")
+                post_hit = send_fight_request(session, URL, main_tree, weaponQuality, side)
                 tree = fromstring(post_hit.content)
                 Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                 Health = float(tree.xpath("//*[@id='healthUpdate']")[0].text.split()[0])

@@ -1,12 +1,16 @@
-from login import login, get_nick_and_pw
-
 import csv
 import os
+import time
 from datetime import datetime
 from random import randint, choice
-import time
+
 import requests
 from lxml.html import fromstring
+
+from login import login, get_nick_and_pw
+import __init__
+from Time_saver.utils import fight395791_
+
 
 def _fix_product_name(product):
     item = product.split()
@@ -28,6 +32,7 @@ def _fix_product_name(product):
     else:
         return Q, item
 
+
 def _get_staff_list(URL):
     blacklist = set()
     i = requests.get(f"{URL}staff.html")
@@ -36,6 +41,7 @@ def _get_staff_list(URL):
     for nick in nicks:
         blacklist.add(nick.strip())
     return blacklist
+
 
 def _get_battle_id(server, battle_id, session):
     URL = f"https://{server}.e-sim.org/"
@@ -75,6 +81,7 @@ def _get_battle_id(server, battle_id, session):
         battle_id = tree.xpath('//tr[2]//td[1]//@href')
     battle_id = battle_id[0].replace("battle.html?id=", "") or None
     return battle_id
+
 
 def _random_sleep(restores_left="100"):
     # Functions: datetime (datetime), randint (random), time
@@ -139,6 +146,7 @@ print(", ".join([f'{v} {k}' for k,v in storage1.items()]))
 slots = ['Helmet', 'Vision', 'Personal Armor', 'Pants',
          'Shoes', 'Lucky charm', 'Weapon upgrade', 'Offhand']
 
+
 def _create_auctions_csv(file_name):
     with open(file_name, 'w', newline='') as csvFile:
         writer = csv.writer(csvFile)
@@ -197,6 +205,13 @@ def _prices_helper(file_name):
         if Help == "1":
             _auctions_csv_helper(file_name)
 
+
+def convert_to_dict(s):
+    s_list = s.replace("'", '').split("&")
+    s_list[0] = f"ip={s_list[0]}"
+    return dict([a.split("=") for a in s_list])
+
+
 def _fighting(server, battle_id, side, wep, session=""):
     URL = f"https://{server}.e-sim.org/"
     if not session:
@@ -209,23 +224,30 @@ def _fighting(server, battle_id, side, wep, session=""):
             if not Health:
                 break
             if Health >= 50:
-                value = "&value=Berserk"
+                value = "Berserk"
             else:
                 value = ""
-            hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
-            HIT = session.post(f"{URL}fight.html?weaponQuality={wep}&battleRoundId={hidden_id}&side={side}{value}")
+            HIT = send_fight_request(session, URL, tree, wep, side, value)
             print(HIT.url)
             time.sleep(randint(1, 2))
         except Exception as e:
             print(e)
             time.sleep(randint(2, 5))
 
-                                   
+
+def send_fight_request(session, URL, tree, wep, side, value="Berserk"):
+    hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
+    fight395791 = fight395791_(tree.text_content())
+    data = {"weaponQuality": wep, "battleRoundId": hidden_id, "side": side, "value": value}
+    data.update(convert_to_dict("".join(tree.xpath("//script[3]/text()")).split("&ip=")[1].split(";")[0]))
+    return session.post(f"{URL}{fight395791}", data=data)
+
+
 def _location(server):
     """getting current location"""
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
-    time.sleep(randint(1,2))
+    time.sleep(randint(1, 2))
     apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
     currentLocationRegionId = apiCitizen['currentLocationRegionId']
     return currentLocationRegionId

@@ -1,6 +1,7 @@
 from login import login
 import __init__
 from Basic.fly import fly
+from Help_functions._bot_functions import send_fight_request
 
 import requests
 from lxml.html import fromstring
@@ -88,7 +89,6 @@ def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="10000000",
         if mySide-enemySide > int(keep_wall):
             time.sleep(10)
             continue
-        hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
         food = tree.xpath('//*[@id="foodLimit2"]')[0].text
         gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
         Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
@@ -101,7 +101,7 @@ def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="10000000",
                 print("Done limits")
                 return
         else:
-            session.post(f"{URL}fight.html?weaponQuality={weaponQuality}&battleRoundId={hidden_id}&side={side}&value=Berserk")
+            send_fight_request(session, URL, tree, weaponQuality, side)
         if not int(food) and not int(gift) and not Health:
             print("Done limits")
             return
