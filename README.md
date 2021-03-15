@@ -46,7 +46,7 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 			   
 		- #### Usage:
 			- Head back to the folder you extracted in Step 3, **double click (in your computer) on any script you want**, or right click -> `open with IDLE` and `press F5` (better), or from `Run Menu` select `Run Module`
-			- *advanced usage* : import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/bot.py)).
+			- *advanced usage* : import the function to another script ([examples](https://github.com/e-sim-python/scripts/blob/master/eSim/bot.py)).
 	
 	- #### Android users:
 		1. Download the e-sim library as a zip file on your Android device from [Here](https://github.com/e-sim-python/scripts/releases) **Download `Android.zip` From Assests**
@@ -71,20 +71,20 @@ If you still think there is a suspicious line, you can [ask us about it, and war
 	- Everything written after the pound (#) in the same line, is a note that can help you understand the code, or for the developers.
 	- Every line with `input` can be replaced (instead of typing the same choice every time you run the script). For example: `server = input("Server: ")` can be replaced into `server = "alpha"`.
 	- Those scripts (Basic folder mainly) are mostly raw, and they can be used in many other ways.
-	- in [Discord bot](https://github.com/e-sim-python/scripts/blob/master/bot.py), if you want to run command in a specific server, **Channel name should be the same as the server you want to run the command on**. (Ex: if you wish to run command in alpha server, name of channel should be `alpha` [screenshot](http://prntscr.com/wmscov))
+	- in [Discord bot](https://github.com/e-sim-python/scripts/blob/master/eSim/bot.py), if you want to run command in a specific server, **Channel name should be the same as the server you want to run the command on**. (Ex: if you wish to run command in alpha server, name of channel should be `alpha` [screenshot](http://prntscr.com/wmscov))
 - ### Customization and Advanced usage:
 	- **Beginner idea:**
 		- Add `await asyncio.sleep(time_in_sconds)` at the beginning of the script to do action with a delay (For example: Bid auctions just before it ends, propose a law while you are sleeping etc.)
 
 	- **Advanced idea:**
-		- Run the [discord bot](https://github.com/e-sim-python/scripts/blob/master/bot.py) in each of your trusted group devices, and let everyone do specific actions in each other accounts (fight, vote laws etc.) (you should have `discord.py` installed already, but if not - install it)
+		- Run the [discord bot](https://github.com/e-sim-python/scripts/blob/master/eSim/bot.py) in each of your trusted group devices, and let everyone do specific actions in each other accounts (fight, vote laws etc.) (you should have `discord.py` installed already, but if not - install it)
 		- you can do that with multies and VPS ;)
 		
 ## Troubleshooting:
 - Make sure that you have python 3.6+ installed by typing `python --version` or `py --version` in CMD. [SCREENSHOT](http://prntscr.com/wmrbkn)
 - Q: "I've entered the wrong credentials, what can i do?" A: Open `Help_functions` folders, delete the `login_details.csv` file or Edit it with [notepad++](https://notepad-plus-plus.org/downloads/) if you know what you are doing.
 - First try to search for the solution online (copy the error to google).
-- For example: `ImportError: No module named aiohttp` -> [google search](https://www.google.com/search?q=No+module+named+aiohttp) will tell you how to install package (via pip). In that specific error you can also run [install_package.py](https://github.com/e-sim-python/scripts/blob/master/Help_functions/install_packets.py)
+- For example: `ImportError: No module named aiohttp` -> [google search](https://www.google.com/search?q=No+module+named+aiohttp) will tell you how to install package (via pip). In that specific error you can also run [install_package.py](https://github.com/e-sim-python/scripts/blob/master/eSim/Help_functions/install_packets.py)
 - Sometimes all you need is to login via script again, because your cookies are too old (Run `Help/login`, or delete `Help/cookies.txt`).
 - See if there are updates in the source code. (`pip install -U eSim`)
 - If you believe that the error is made by us, you can describe it [here](https://github.com/e-sim-python/scripts/issues) and we will try to fix. This is also the place for suggestions and any contact.
