@@ -167,7 +167,7 @@ async def prices_helper(file_name):
 
 
 def convert_to_dict(s):
-    s_list = s.replace("'", '').split("&")
+    s_list = s.split("&")
     s_list[0] = f"ip={s_list[0]}"
     return dict([a.split("=") for a in s_list])
 
@@ -194,7 +194,7 @@ async def send_fight_request(URL, tree, wep, side, value="Berserk"):
     hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
     fight395791 = fight395791_(tree.text_content())
     data = {"weaponQuality": wep, "battleRoundId": hidden_id, "side": side, "value": value}
-    data.update(convert_to_dict("".join(tree.xpath("//script[3]/text()")).split("&ip=")[1].split(";")[0]))
+    data.update(convert_to_dict("".join(tree.xpath("//script[3]/text()")).split("&ip=")[1].split("'")[0]))
     return await get_content(f"{URL}{fight395791}", data=data)
 
 
