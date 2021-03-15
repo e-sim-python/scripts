@@ -1,6 +1,8 @@
 name: Upload Python Package
 
-on: [push]
+on:
+  release:
+    types: [published]
 
 jobs:
   deploy:
@@ -14,7 +16,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine
+        pip install setuptools wheel twine bump2version
+    - name: Bump Version
+      run: |
+        bump2version minor --verbose
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
