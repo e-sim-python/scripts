@@ -38,7 +38,7 @@ async def get_staff_list(URL):
     return blacklist
 
 
-async def get_battle_id(server, battle_id):
+async def get_battle_id(server, battle_id, priorize_my_country=False):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
     apiCitizen = await get_content(f"{URL}apiCitizenByName.html?name={nick.lower()}")
@@ -67,7 +67,15 @@ async def get_battle_id(server, battle_id):
     except:
         tree = await get_content(f"{URL}battles.html?filter=PRACTICE_BATTLE")
         battle_id = tree.xpath('//tr[2]//td[1]//a/@href')
+    if not battle_id:
+        battle_id = [""]
     battle_id = battle_id[0].replace("battle.html?id=", "") or None
+    if priorize_my_country:
+        sides = [x.replace("xflagsMedium xflagsMedium-", "").replace("-", " ").lower() for x in
+                 tree.xpath('//tr//td[1]//div//div//div/@class') if "xflagsMedium" in x]
+        for battle_id, sides in (battle_id, sides):
+            if apiCitizen["citizenship"].lower() in sides:
+                return battle_id
     return battle_id
 
 
