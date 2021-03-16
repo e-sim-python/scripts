@@ -69,14 +69,14 @@ async def get_battle_id(server, battle_id, priorize_my_country=False):
         battle_id = tree.xpath('//tr[2]//td[1]//a/@href')
     if not battle_id:
         battle_id = [""]
-    battle_id = battle_id[0].replace("battle.html?id=", "") or None
+                                     
     if priorize_my_country:
         sides = [x.replace("xflagsMedium xflagsMedium-", "").replace("-", " ").lower() for x in
                  tree.xpath('//tr//td[1]//div//div//div/@class') if "xflagsMedium" in x]
-        for battle_id, sides in (battle_id, sides):
+        for _id, sides in (battle_id, sides):
             if apiCitizen["citizenship"].lower() in sides:
-                return battle_id
-    return battle_id
+                return _id.replace("battle.html?id=", "")
+    return battle_id[0].replace("battle.html?id=", "") or None
 
 
 async def random_sleep(restores_left="100"):
