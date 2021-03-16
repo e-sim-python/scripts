@@ -73,7 +73,7 @@ async def get_battle_id(server, battle_id, priorize_my_country=False):
     if priorize_my_country:
         sides = [x.replace("xflagsMedium xflagsMedium-", "").replace("-", " ").lower() for x in
                  tree.xpath('//tr//td[1]//div//div//div/@class') if "xflagsMedium" in x]
-        for _id, sides in (battle_id, sides):
+        for _id, sides in zip(battle_id, sides):
             if apiCitizen["citizenship"].lower() in sides:
                 return _id.replace("battle.html?id=", "")
     return battle_id[0].replace("battle.html?id=", "") or None
