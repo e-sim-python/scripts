@@ -12,7 +12,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/e-sim-python/scripts",
     packages=setuptools.find_packages(),
-    install_requires=["lxml", "discord.py", "pytz"],
+    install_requires=["lxml", "discord.py", "pytz","aiohttp"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
