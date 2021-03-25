@@ -5,7 +5,7 @@ from datetime import datetime
 from random import choice, randint
 
 from Time_saver.utils import fight395791_
-from login import get_content, get_nick_and_pw
+from login import get_content, get_nick_and_pw, login
 
 
 def fix_product_name(product):
@@ -183,14 +183,16 @@ def convert_to_dict(s):
 async def fighting(server, battle_id, side, wep):
     URL = f"https://{server}.e-sim.org/"
 
-    for x in range(20):  # hitting until you have 0 health.
+    for x in range(1, 20):  # hitting until you have 0 health.
         try:
             tree = await get_content(f'{URL}battle.html?id={battle_id}')
             Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
             if not Health:
                 break
             value = "Berserk" if Health >= 50 else ""
-            await send_fight_request(URL, tree, wep, side, value)
+            _, status_code = await send_fight_request(URL, tree, wep, side, value)
+            if status_code != 200:
+                await login(clear_cookies=True)
             print(f"Hit {x}")
             await asyncio.sleep(randint(1, 2))
         except Exception as e:
