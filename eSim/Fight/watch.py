@@ -78,7 +78,6 @@ async def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="1000
         if mySide-enemySide > int(keep_wall):
             await asyncio.sleep(10)
             continue
-        hidden_id = tree.xpath("//*[@id='battleRoundId']")[0].value
         Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
         if Health < 50:
             if int(food) and int(food_limit):
