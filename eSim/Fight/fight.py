@@ -21,13 +21,14 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
     dmg = int(dmg_or_hits.replace("k", "000"))
     api = await get_content(link.replace("battle", "apiBattles").replace("id", "battleId"))
 
-    tree = await get_content(link, login_first=True)
-    food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
-    gift_limit = tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
-    food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
-    gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
+    main_tree = await get_content(link, login_first=True)
+    Health = int(float(main_tree.xpath('//*[@id="actualHealth"]')[0].text))
+    food_limit = main_tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
+    gift_limit = main_tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
+    food = int(float(main_tree.xpath('//*[@id="foodLimit2"]')[0].text))
+    gift = int(float(main_tree.xpath('//*[@id="giftLimit2"]')[0].text))
     if int(weaponQuality):
-        wep = tree.xpath(f'//*[@id="Q{weaponQuality}WeaponStock"]/text()')[0]
+        wep = main_tree.xpath(f'//*[@id="Q{weaponQuality}WeaponStock"]/text()')[0]
     else:
         wep = "unlimited"
 
@@ -53,12 +54,6 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
     for _ in range(100):
         if time.time() - start > int(start_time):
             break  # round is over
-        tree = await get_content(link)
-        Health = int(float(tree.xpath('//*[@id="actualHealth"]')[0].text))
-        food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
-        gift_limit = tree.xpath('//*[@id="sgiftQ5"]/text()')[0]
-        food = int(float(tree.xpath('//*[@id="foodLimit2"]')[0].text))
-        gift = int(float(tree.xpath('//*[@id="giftLimit2"]')[0].text))
         if Health < 50:
             if (not food or not int(food_limit)) and (not gift or not int(gift_limit)):
                 print("done limits")
@@ -76,7 +71,7 @@ async def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQualit
             await get_content(f"{URL}{use}.html", data={'quality': 5})
         for _ in range(5):
             try:
-                tree, status = await send_fight_request(URL, tree, weaponQuality, side)
+                tree, status = await send_fight_request(URL, main_tree, weaponQuality, side)
                 Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                 Health = float(tree.xpath("//*[@id='healthUpdate']")[0].text.split()[0])
                 if dmg < 1000:
