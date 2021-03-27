@@ -23,13 +23,13 @@ async def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0
         time_till_round_end = r["hoursRemaining"]*3600 + r["minutesRemaining"]*60 + r["secondsRemaining"] - randint(15, 45)
         print(f"Hunting at {link} ({side}). sleeping for {time_till_round_end} seconds.")
         await asyncio.sleep(time_till_round_end)
-        tree = await get_content(link, login_first=True)
+        main_tree = await get_content(link, login_first=True)
         DamageDone = 0
         while DamageDone < int(max_dmg_for_bh):
-            Health = int(float(str(tree.xpath("//*[@id='actualHealth']")[0].text)))
-            food = tree.xpath('//*[@id="foodLimit2"]')[0].text
-            food_limit = tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
-            gift = tree.xpath('//*[@id="giftLimit2"]')[0].text
+            Health = int(float(str(main_tree.xpath("//*[@id='actualHealth']")[0].text)))
+            food = main_tree.xpath('//*[@id="foodLimit2"]')[0].text
+            food_limit = main_tree.xpath('//*[@id="sfoodQ5"]/text()')[0]
+            gift = main_tree.xpath('//*[@id="giftLimit2"]')[0].text
             if Health < 50:
                 if int(food) and int(food_limit):
                     await get_content(f"{URL}eat.html", data={'quality': 5})
@@ -38,7 +38,7 @@ async def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0
             Damage = 0
             for _ in range(5):
                 try:
-                    tree, status = await send_fight_request(URL, tree, weapon_quality, side)
+                    tree, status = await send_fight_request(URL, main_tree, weapon_quality, side)
                     Damage = int(str(tree.xpath('//*[@id="DamageDone"]')[0].text).replace(",", ""))
                     break
                 except:
