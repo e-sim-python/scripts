@@ -9,6 +9,7 @@
 			1. [Installing](https://github.com/e-sim-python/scripts#installing)
 			2. [Usage](https://github.com/e-sim-python/scripts#usage)
 		2. [Android](https://github.com/e-sim-python/scripts#android-users)
+		3. [iOS](https://github.com/e-sim-python/scripts/issues/15)
 	3. [Notes](https://github.com/e-sim-python/scripts#few-notes)
 	4. [Customization and Advanced usage](https://github.com/e-sim-python/scripts#customization-and-advanced-usage)
 4. [Troubleshooting](https://github.com/e-sim-python/scripts#troubleshooting)
