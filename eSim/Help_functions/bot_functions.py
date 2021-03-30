@@ -46,6 +46,7 @@ async def get_battle_id(server, battle_id, priorize_my_country=False):
         if row['regionId'] == apiCitizen['currentLocationRegionId']:
             occupantId = row['occupantId']
             break
+    await login(server)
     try:
         if apiCitizen["level"] < 15:
             raise  # PRACTICE_BATTLE
@@ -192,7 +193,7 @@ async def fighting(server, battle_id, side, wep):
             value = "Berserk" if Health >= 50 else ""
             _, status_code = await send_fight_request(URL, tree, wep, side, value)
             if status_code != 200:
-                await login(clear_cookies=True)
+                await login(server, clear_cookies=True)
             print(f"Hit {x}")
             await asyncio.sleep(randint(1, 2))
         except Exception as e:
