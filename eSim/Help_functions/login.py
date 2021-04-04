@@ -143,7 +143,7 @@ async def login(server, clear_cookies=False):
         del cookies[server]
     user_agent = cookies.get("user_agent", 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0')
 
-    headers.update({"User-Agent": user_agent, "Referer": f"{URL}index.html", 'Connection': 'keep-alive'}})
+    headers.update({"User-Agent": user_agent, "Referer": f"{URL}index.html", 'Connection': 'keep-alive'})
     online_check = False
     if server in cookies:
         online_check = await session.get(URL + "storage.html", cookies=cookies[server], headers=headers, ssl=server!="vita")
