@@ -93,9 +93,13 @@ def get_nick_and_pw(server):
 
 headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 cookies = {"user_agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
+permanent_servers = 'primera', 'secura', 'suna', 'alpha'
+
+
 async def create_session():
     return ClientSession(headers=headers)
 session = loop.run_until_complete(create_session())
+
 
 async def get_content(link, data=None, login_first=False, return_url=False):
     """
@@ -112,10 +116,11 @@ async def get_content(link, data=None, login_first=False, return_url=False):
 
     server = link.split("#")[0].replace("http://", "https://").split("https://")[1].split(".e-sim.org")[0]
     method = "get" if data is None else "post"
+    condition = server.lower() in permanent_servers
     if login_first:
         await login(server)
-    async with session.get(link, cookies=cookies.get(server), headers=headers, ssl=server!="vita") if method == "get" else \
-               session.post(link, cookies=cookies.get(server), headers=headers, data=data, ssl=server!="vita") as respond:
+    async with session.get(link, cookies=cookies.get(server), headers=headers, ssl=condition) if method == "get" else \
+               session.post(link, cookies=cookies.get(server), headers=headers, data=data, ssl=condition) as respond:
         if method == "post":
             if "fight" in link:
                 return fromstring(await respond.text(encoding='utf-8')), respond.status
@@ -145,14 +150,15 @@ async def login(server, clear_cookies=False):
 
     headers.update({"User-Agent": user_agent, "Referer": f"{URL}index.html", 'Connection': 'keep-alive'})
     online_check = False
+    condition = server.lower() in permanent_servers
     if server in cookies:
-        online_check = await session.get(URL + "storage.html", cookies=cookies[server], headers=headers, ssl=server!="vita")
+        online_check = await session.get(URL + "storage.html", cookies=cookies[server], headers=headers, ssl=condition)
         online_check = "notLoggedIn" in str(online_check.url) or "error" in str(online_check.url)
     if online_check or server not in cookies:
         nick, password = get_nick_and_pw(server)
         payload = {'login': nick, 'password': password, "submit": "Login"}
-        async with session.get(URL, headers=headers, ssl=server!="vita") as _:
-            async with session.post(URL + "login.html", headers=headers, data=payload, ssl=server!="vita") as r:
+        async with session.get(URL, headers=headers, ssl=condition) as _:
+            async with session.post(URL + "login.html", headers=headers, data=payload, ssl=condition) as r:
                 if "index.html?act=login" not in str(r.url):
                     print(r.url)
                     print("Login problem. check your nick and password and try again")
