@@ -35,7 +35,7 @@ def _fix_product_name(product):
 
 def _get_staff_list(URL):
     blacklist = set()
-    i = requests.get(f"{URL}staff.html")
+    i = requests.get(f"{URL}staff.html", verify=False)
     tree = fromstring(i.content)
     nicks = tree.xpath('//*[@id="esim-layout"]//a/text()')
     for nick in nicks:
@@ -46,9 +46,9 @@ def _get_staff_list(URL):
 def _get_battle_id(server, battle_id, session):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
-    apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
+    apiCitizen = session.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
     currentLocationRegionId = apiCitizen['currentLocationRegionId']
-    apiMap = requests.get(f'{URL}apiMap.html').json()
+    apiMap = session.get(f'{URL}apiMap.html').json()
     for row in apiMap:
         if row['regionId'] == currentLocationRegionId:
             occupantId = row['occupantId']
@@ -62,7 +62,7 @@ def _get_battle_id(server, battle_id, session):
             links = tree.xpath("//tr[position()<12]//td[1]//div[2]//@href")
             for link in links:
                 link_id = link.split('=', 1)[1]
-                apiBattles = requests.get(f"{URL}apiBattles.html?battleId={link_id}").json()[0]
+                apiBattles = session.get(f"{URL}apiBattles.html?battleId={link_id}").json()[0]
                 if apiCitizen['citizenshipId'] in (apiBattles['attackerId'], apiBattles['defenderId']):
                     battle_id = link_id
                     break
@@ -118,7 +118,7 @@ for num in range(2,22):
     try:
         item = str(tree.xpath(f'//*[@id="resourceInput"]/option[{num}]')[0].text).strip().replace("(available","").replace(")","").split(":")
         while "  " in item[0]: item[0] = item[0].replace("  ","")
-        
+
         storage1[item[0]] = int(item[1])
     except:break
 print(", ".join(storage))
@@ -248,6 +248,6 @@ def _location(server):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
     time.sleep(randint(1, 2))
-    apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
+    apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}", verify=False).json()
     currentLocationRegionId = apiCitizen['currentLocationRegionId']
     return currentLocationRegionId
