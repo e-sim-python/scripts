@@ -1,9 +1,11 @@
 import csv
 import json
 from os import path
+import warnings
 
 import requests
 from lxml.html import fromstring
+warnings.filterwarnings("ignore")
 
 directory = path.dirname(__file__)
 
