@@ -29,7 +29,7 @@ def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gift="",
                     current_loc = _location(server)
                     double_click(server, session)
                     fly(server, current_loc, session=session)
-                apiBattles = requests.get(f"{URL}apiBattles.html?battleId={battle_id}").json()[0]
+                apiBattles = session.get(f"{URL}apiBattles.html?battleId={battle_id}").json()[0]
                 if 8 in (apiBattles['attackerScore'], apiBattles['defenderScore']):
                     print("Battle has finished, i will search for another one")
                     battle_id = _get_battle_id(server, battle_id, session)

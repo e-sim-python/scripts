@@ -110,8 +110,8 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     payload = {'action': "buy", 'id': productId, 'quantity': 1, "submit": "Buy"}
                     session.post(URL + "productMarket.html", data=payload)
                 elif num in (12, 54):
-                    Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
-                    apiRegions = requests.get(URL + "apiRegions.html").json()
+                    Citizen = session.get(f'{URL}apiCitizenById.html?id={my_id}').json()
+                    apiRegions = session.get(URL + "apiRegions.html").json()
                     capital = [row['id'] if row['homeCountry'] == Citizen['citizenshipId'] and
                                             row['capital'] else 1 for row in apiRegions][0]
                     fly(server, capital, 3, session=session)
@@ -134,7 +134,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                                "sendToMilitaryUnit": "on", "sendToParty": "on", "sendToFriends": "on"}
                     session.post(f"{URL}shoutActions.html", data=payload)
                 elif num == 19:
-                    Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
+                    Citizen = session.get(f'{URL}apiCitizenById.html?id={my_id}').json()
                     monetaryMarket = session.get(
                         URL + 'monetaryMarket.html?buyerCurrencyId=0&sellerCurrencyId=' + str(
                             int(Citizen['currentLocationRegionId'] / 6)))
@@ -148,7 +148,7 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                     ID = tree.xpath(f'//*[starts-with(@id, "cell")]/a/text()')[0].replace("#", "")
                     sell_eqs(server, ID, 0.01, 48, session)
                 elif num == 22:
-                    Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
+                    Citizen = session.get(f'{URL}apiCitizenById.html?id={my_id}').json()
                     payload = {'product': "GRAIN", 'countryId': Citizen['citizenshipId'], 'storageType': "PRODUCT",
                                "action": "POST_OFFER", "price": 0.1, "quantity": 100}
                     sell_grain = session.post(URL + "storage.html", data=payload)
@@ -211,11 +211,11 @@ def missions(server, missions_to_complete="ALL", action="ALL", session=""):
                 elif num == 52:
                     fly(server, 1, 3, session)
                 elif num == 55:
-                    requests.get(URL + f"lan.{my_id}/")
+                    requests.get(URL + f"lan.{my_id}/", verify=False)
                 elif num in (61, 55):
                     send_motivates(server, "ALL", session)
                 elif num == 57:
-                    Citizen = requests.get(f'{URL}apiCitizenById.html?id={my_id}').json()
+                    Citizen = session.get(f'{URL}apiCitizenById.html?id={my_id}').json()
                     payload = {'receiverName': f"{Citizen['citizenship']} Org", "title": "Hi",
                                "body": choice(["Hi", "Can you send me some gold?", "Hello there!", "Discord?"]), "action": "REPLY", "submit": "Send"}
                     session.post(URL + "composeMessage.html", data=payload)

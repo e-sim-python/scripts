@@ -30,9 +30,9 @@ def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="10000000",
         return
     let_overkill = let_overkill.replace("k", "000")
     keep_wall = keep_wall.replace("k", "000")
-    r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
+    r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId"), verify=False).json()[0]
     while 8 not in (r['defenderScore'], r['attackerScore']):
-        r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
+        r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId"), verify=False).json()[0]
         time_till_round_end = r["hoursRemaining"]*3600 + r["minutesRemaining"]*60 + \
                               r["secondsRemaining"] - int(start_time)
         print(f"Sleeping for {time_till_round_end} seconds.")
@@ -47,8 +47,8 @@ def watch(link, side, start_time="60", keep_wall="3kk", let_overkill="10000000",
         gift_limit = tree.xpath('//*[@id="giftQ5"]/text()')[0]
         if r['type'] == "ATTACK":
             if side.lower() == "attacker":
-                apiMap = requests.get(f'{URL}apiMap.html').json()
-                apiRegions = requests.get(URL + "apiRegions.html").json()
+                apiMap = session.get(f'{URL}apiMap.html').json()
+                apiRegions = session.get(URL + "apiRegions.html").json()
                 try:
                     neighboursId = [z['neighbours'] for z in apiRegions if z["id"] == r['regionId']][0]
                     aBonus = [i for z in apiMap for i in neighboursId if i == z['regionId'] and

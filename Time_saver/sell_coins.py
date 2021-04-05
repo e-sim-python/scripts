@@ -6,7 +6,7 @@ from lxml.html import fromstring
 def mm(server, session=""):
     """Sells all currencies in your account in the appropriate markets & edit current offers if needed."""
     URL = f"https://{server}.e-sim.org/"
-    api = requests.get(URL + "apiCountries.html").json()
+    api = requests.get(URL + "apiCountries.html", verify=False).json()
 
     if not session:
         session = login(server)

@@ -11,7 +11,7 @@ def mpp_dow_attack(server, ID, action, delay_or_battle_link=""):
     if ".e-sim.org/battle.html?id=" in delay_or_battle_link:
         while 1:
             delay_or_battle_link = delay_or_battle_link.replace("battle", "apiBattles").replace("id", "battleId")
-            apiBattles = requests.get(delay_or_battle_link).json()[0]
+            apiBattles = requests.get(delay_or_battle_link, verify=False).json()[0]
             dScore = apiBattles['defenderScore']
             aScore = apiBattles['attackerScore']
             round_ends = apiBattles["hoursRemaining"] * 3600 +\

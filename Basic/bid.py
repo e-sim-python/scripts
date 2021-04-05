@@ -9,7 +9,7 @@ def bid_specific_auction(server, auction_id_or_link, price, delay=True):
     URL = f"https://{server}.e-sim.org/"
     if ".e-sim.org/auction.html?id=" in auction_id_or_link:
         auction_id_or_link = auction_id_or_link.split("=")[1]
-    auction_url = requests.get(f"{URL}auction.html?id={auction_id_or_link}")
+    auction_url = requests.get(f"{URL}auction.html?id={auction_id_or_link}", verify=False)
     tree = fromstring(auction_url.content)
     try:
         auction_time = str(tree.xpath(f'//*[@id="auctionClock{auction_id}"]')[0].text)

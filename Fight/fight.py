@@ -20,7 +20,7 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
         print(f'side must be "defender" or "attacker" (not {side})')
         return
     dmg = int(dmg_or_hits.replace("k", "000"))
-    api = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
+    api = session.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
     if not session:
         session = login(server)
     r = session.get(link)
@@ -37,8 +37,8 @@ def fight(link, side, weaponQuality="0", dmg_or_hits="100kk", ticketQuality="5",
 
     if api['type'] == "ATTACK":
         if side.lower() == "attacker":
-            apiMap = requests.get(f'{URL}apiMap.html').json()
-            apiRegions = requests.get(f'{URL}apiRegions.html').json()
+            apiMap = session.get(f'{URL}apiMap.html').json()
+            apiRegions = session.get(f'{URL}apiRegions.html').json()
             try:
                 neighboursId = [region['neighbours'] for region in apiRegions if region["id"] == api['regionId']][0]
                 aBonus = [i for region in apiMap for i in neighboursId if

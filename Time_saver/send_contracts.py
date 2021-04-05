@@ -42,10 +42,10 @@ def _remove_rejected(URL, blacklist, session):
 def _get_friends_list(server):
     URL = f"https://{server}.e-sim.org/"
     nick = get_nick_and_pw(server)[0]
-    apiCitizen = requests.get(f'{URL}apiCitizenByName.html?name={nick.lower()}').json()
+    apiCitizen = requests.get(f'{URL}apiCitizenByName.html?name={nick.lower()}', verify=False).json()
 
     for page in range(1, 100):
-        my_friends = requests.get(f'{URL}profileFriendsList.html?id={apiCitizen["id"]}&page={page}')
+        my_friends = requests.get(f'{URL}profileFriendsList.html?id={apiCitizen["id"]}&page={page}', verify=False)
         tree = fromstring(my_friends.content)
         for div in range(1, 21):
             friend = tree.xpath(f'//div//div[1]//div[{div}]/a/text()')

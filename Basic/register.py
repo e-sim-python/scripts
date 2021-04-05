@@ -17,6 +17,9 @@ def register(server, nick, password, lan, countryId):
     headers = {"User-Agent": agent, "Referer": "https://e-sim.org"}
     session = requests.session()
     session.headers.update(headers)
+    permanent_servers = 'primera', 'secura', 'suna', 'alpha'
+    if server.lower() not in permanent_servers:
+        session.verify = False
     session.get(URL + "index.html?lan=" + lan.replace(f"{URL}lan.", ""))
     login_params = {"preview": "USA_MODERN", "login": nick, "password": password,
                     "mail": f'{nick.replace(" ", "")}@gmail.com', "countryId": countryId, "checkHuman": "Human"}

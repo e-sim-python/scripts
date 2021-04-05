@@ -16,19 +16,19 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
     maxDmgForBh, startTime = int(maxDmgForBh.replace("k", "000")), int(startTime)
     print(f"Startint to hunt at {server}.")
     nick = get_nick_and_pw(server)[0]
-    apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}").json()
+    apiCitizen = requests.get(f"{URL}apiCitizenByName.html?name={nick.lower()}", verify=False).json()
     while 1:
       try:
         battles_time = {}
-        apiMap = requests.get(f'{URL}apiMap.html').json()
+        apiMap = requests.get(f'{URL}apiMap.html', verify=False).json()
         for row in apiMap:
             if "battleId" in row:
-                apiBattles = requests.get(f'{URL}apiBattles.html?battleId={row["battleId"]}').json()[0]
+                apiBattles = requests.get(f'{URL}apiBattles.html?battleId={row["battleId"]}', verify=False).json()[0]
                 round_ends = apiBattles["hoursRemaining"]*3600 + apiBattles["minutesRemaining"]*60 + apiBattles["secondsRemaining"]
                 battles_time[row["battleId"]] = round_ends
-        apiRegions = requests.get(URL + "apiRegions.html").json()
+        apiRegions = requests.get(URL + "apiRegions.html", verify=False).json()
         for battle_id, round_ends in sorted(battles_time.items(), key=lambda x: x[1]):
-            apiBattles = requests.get(f'{URL}apiBattles.html?battleId={battle_id}').json()[0]
+            apiBattles = requests.get(f'{URL}apiBattles.html?battleId={battle_id}', verify=False).json()[0]
             if apiBattles['frozen']:
                 continue
             time_to_sleep = apiBattles["hoursRemaining"]*3600 + apiBattles["minutesRemaining"]*60 + apiBattles["secondsRemaining"]
@@ -40,7 +40,7 @@ def hunt(server, maxDmgForBh="500000", startTime="30", weaponQuality="5"):
                 time.sleep(time_to_sleep - startTime)
             except:
                 pass
-            apiFights = requests.get(f'{URL}apiFights.html?battleId={battle_id}&roundId={apiBattles["currentRound"]}').json()
+            apiFights = requests.get(f'{URL}apiFights.html?battleId={battle_id}&roundId={apiBattles["currentRound"]}', verify=False).json()
             defender, attacker = {}, {}
             for hit in apiFights:
                 side = defender if hit['defenderSide'] else attacker

@@ -19,9 +19,9 @@ def hunt_specific_battle(link, side, max_dmg_for_bh="1", weapon_quality="0"):
         print(f'"side" must be "defender" or "attacker" (not {side})')
         return
     max_dmg_for_bh = max_dmg_for_bh.replace("k", "000")
-    r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
+    r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId"), verify=False).json()[0]
     while 8 not in (r['defenderScore'], r['attackerScore']):
-        r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId")).json()[0]
+        r = requests.get(link.replace("battle", "apiBattles").replace("id", "battleId"), verify=False).json()[0]
         time_till_round_end = r["hoursRemaining"]*3600 + r["minutesRemaining"]*60 +\
                               r["secondsRemaining"] - randint(15, 45)
         print(f"Hunting at {link} ({side}). sleeping for {time_till_round_end} seconds.")
