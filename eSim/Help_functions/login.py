@@ -123,10 +123,19 @@ async def get_content(link, data=None, login_first=False, return_url=False):
                session.post(link, cookies=cookies.get(server), headers=headers, data=data, ssl=condition) as respond:
         if method == "post":
             if "fight" in link:
-                return fromstring(await respond.text(encoding='utf-8')), respond.status
-            return str(respond.url) if not return_url else fromstring(await respond.text(encoding='utf-8'))
+                try:
+                    return fromstring(await respond.text(encoding='utf-8')), respond.status
+                except:
+                    return fromstring((await respond.text(encoding='utf-8'))[1:]), respond.status
+            try:
+                return str(respond.url) if not return_url else fromstring(await respond.text(encoding='utf-8'))
+            except:
+                return str(respond.url) if not return_url else fromstring((await respond.text(encoding='utf-8'))[1:])
         if return_type == "html":
-            return fromstring(await respond.text(encoding='utf-8')) if not return_url else str(respond.url)
+            try:
+                return fromstring(await respond.text(encoding='utf-8')) if not return_url else str(respond.url)
+            except:
+                return fromstring((await respond.text(encoding='utf-8'))[1:]) if not return_url else str(respond.url)
         else:
             json_respond = await respond.json(content_type=None)
             if "apiBattles" in link:
