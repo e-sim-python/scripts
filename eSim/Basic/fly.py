@@ -25,7 +25,7 @@ async def fly(server, region_id, ticket_quality="5"):
 async def flight_set(server, region1, region2, ticket_quality="5", limits=True):
     if ticket_quality != "5":
         ticket_health = {1: 40, 2: 30, 3: 20, 4: 10}
-        flights_each_restore = int(200 if limits else 100 / ticket_health[int(ticket_quality)])
+        flights_each_restore = int((200 if limits else 100) / ticket_health[int(ticket_quality)])
         health = 100
         food_or_gift = "eat"
         current_region = await location(server)
