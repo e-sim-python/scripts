@@ -178,7 +178,7 @@ async def login(server, clear_cookies=False):
         write_json(cookies, cookies_file_name)
 
 
-async def double_click(server, queue=""):
+async def double_click(server, queue="", ticket_quality="1"):
     URL = f"https://{server}.e-sim.org/"
     if queue == "+":
         payload1 = {'task': "WORK", "action": "put", "submit": "Add plan"}
@@ -191,7 +191,7 @@ async def double_click(server, queue=""):
         try:
             region = tree.xpath('//div[1]//div[2]//div[5]//div[1]//div//div[1]//div//div[4]//a/@href')[0].split("=")[1]
             payload = {'countryId': int(int(region) / 6) + (int(region) % 6 > 0), 'regionId': region,
-                       'ticketQuality': 5}
+                       'ticket_quality': ticketQuality}
             await get_content(URL + "travel.html", data=payload)
         except:
             return print("I couldn't find in which region your work is. Maybe you don't have a job")
