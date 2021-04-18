@@ -26,8 +26,8 @@ async def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gi
             A = randint(1, 4)
             if check and A == 2:  # Don't work as soon as you can (suspicious)
                 current_loc = await location(server)
-                await double_click(server)
-                await fly(server, current_loc)
+                await double_click(server, ticket_quality="1")
+                await fly(server, current_loc, ticket_quality="1")
             apiBattles = await get_content(f"{URL}apiBattles.html?battleId={battle_id}")
             if 8 in (apiBattles['attackerScore'], apiBattles['defenderScore']):
                 print("Battle has finished, i will search for another one")
