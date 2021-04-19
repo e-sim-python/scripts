@@ -191,7 +191,7 @@ async def double_click(server, queue="", ticket_quality="1"):
         try:
             region = tree.xpath('//div[1]//div[2]//div[5]//div[1]//div//div[1]//div//div[4]//a/@href')[0].split("=")[1]
             payload = {'countryId': int(int(region) / 6) + (int(region) % 6 > 0), 'regionId': region,
-                       'ticket_quality': ticketQuality}
+                       'ticket_quality': ticket_quality}
             await get_content(URL + "travel.html", data=payload)
         except:
             return print("I couldn't find in which region your work is. Maybe you don't have a job")
