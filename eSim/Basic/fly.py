@@ -40,7 +40,7 @@ async def flight_set(server, region1, region2, ticket_quality="5", limits=True):
                 if flights_each_restore <= 0 and health < ticket_health[int(ticket_quality)]:
                     await random_sleep()
                     health = 100
-                    flights_each_restore = int(200 if limits else 100 / ticket_health[int(ticket_quality)])
+                    flights_each_restore = int((200 if limits else 100) / ticket_health[int(ticket_quality)])
                     use_counter = 2 if limits else 0
 
                 await fly(server, region_id, ticket_quality)
