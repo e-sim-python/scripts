@@ -37,7 +37,8 @@ async def Inventory(server, ctx=None):
             elif "upgrade" in item.xpath('b/text()')[0].lower():
                 products.append("Upgrades")
     for item in container_1:
-        name = item.xpath("div[2]/img/@src")[0].replace("//cdn.e-sim.org//img/productIcons/", "").replace(".png", "")
+        name = item.xpath("div[2]/img/@src")[0].replace("//cdn.e-sim.org//img/productIcons/", "").replace(
+            "Rewards/","").replace(".png", "")
         if name.lower() in ["iron", "grain", "diamonds", "oil", "stone", "wood"]:
             quality = ""
         else:
