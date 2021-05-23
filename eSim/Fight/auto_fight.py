@@ -1,5 +1,6 @@
 import asyncio
 from random import randint
+import traceback
 
 import __init__  # For IDLE
 from Basic.fly import fly
@@ -48,7 +49,8 @@ async def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gi
             await random_sleep(restores_left)
 
         except Exception as error:
-            print("error:", error)
+            print("------ERROR------\n")
+            traceback.print_exc()
             await random_sleep(restores_left)
 
 
