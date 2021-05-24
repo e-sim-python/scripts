@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="eSim",
-    version= "2.8.4",
+    version= "2.8.5",
     author="e-sim-python",
     description="E-sim python library",
     long_description=long_description,
