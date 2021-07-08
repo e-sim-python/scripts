@@ -1,6 +1,8 @@
 
 # E-sim python library
 [![Flag Counter](https://s01.flagcounter.com/mini/5j6R/bg_FFFFFF/txt_000000/border_CCCCCC/flags_0/)](https://info.flagcounter.com/5j6R)
+
+## For a better implementation, see https://github.com/e-sim-python/eSim (for advanced users)
 #### Table of Content:
 1. [Introduction](https://github.com/e-sim-python/scripts#introduction)
 2. [Installation and usage](https://github.com/e-sim-python/scripts#installation-and-usage)
