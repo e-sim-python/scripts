@@ -53,23 +53,29 @@ async def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gi
             traceback.print_exc()
             await random_sleep(restores_left)
 
+            
+async def main(funcs):
+    await asyncio.gather(*funcs)
 
 if __name__ == "__main__":
     print(auto_fight.__doc__)
-    server = input("Server: ")
-    battle_id = input("Battle id (optional): ")
-    if battle_id:
-        side = input("Side (attacker/defender): ")
-        if side.lower() not in ("attacker", "defender"):
-            print(f"'side' parameter must be attacker/defender only (not {side})")
-            raise SystemExit()
-    else:
-        side = "attacker"
-    wep = input("Wep quality (0-5): ")
-    food = input("If you want to use food, enter it's quality (1-5): ")
-    gift = input("If you want to use gift, enter it's quality (1-5): ")
-    restores = input("Fight this amount of restores: ") or "100"
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        auto_fight(server, battle_id, side, wep, food, gift, restores))
+    servers = input("Servers (separated by space): ")
+    funcs = []
+    for server in servers.split():
+        server = server.strip().lower()
+        battle_id = input(f"[{server}] Battle id (optional): ")
+        if battle_id:
+            side = input(f"[{server}] Side (attacker/defender): ")
+            if side.lower() not in ("attacker", "defender"):
+                print(f"'side' parameter must be attacker/defender only (not {side})")
+                raise SystemExit()
+        else:
+            side = "attacker"
+        wep = input(f"[{server}] Wep quality (0-5): ")
+        food = input(f"[{server}] If you want to use food, enter it's quality (1-5): ")
+        gift = input(f"[{server}] If you want to use gift, enter it's quality (1-5): ")
+        restores = input(f"[{server}] Fight this amount of restores: ") or "100"
+        funcs.append(auto_fight(server, battle_id, side, wep, food, gift, restores))
+    asyncio.run(main(funcs))
+    
     input("Press any key to continue")
