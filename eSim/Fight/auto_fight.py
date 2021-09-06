@@ -7,12 +7,16 @@ from Basic.fly import fly
 from Help_functions.bot_functions import fighting, get_battle_id, location, random_sleep
 from login import double_click, get_content
 
+CHANCE_TO_SKIP_RESTORE = 10  # You can change this number however you like.
+
 
 async def auto_fight(server, battle_id="", side="attacker", wep="0", food="", gift="", restores="100"):
     """Dumping health at a random time every restore"""
     URL = f"https://{server}.e-sim.org/"
     restores_left = int(restores)
     for _ in range(int(restores)):
+        if randint(1, 100) <= CHANCE_TO_SKIP_RESTORE:
+            await asyncio.sleep(600)
         restores_left -= 1
         try:
             if not str(battle_id).replace("0", "").isdigit():
