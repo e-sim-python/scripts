@@ -54,12 +54,12 @@ def define_login_details(nick="", password="", server=""):
     with open(cookies_file_name, 'r') as file:
         data = json.load(file)
         try:
-            user_agent = data["user_agent"]
+            user_agent = data["User-Agent"]
         except:
             print("Go to this site - https://www.whatsmyua.info/ , copy your user-agent and paste here")
             user_agent = input(
                 "It will tell e-sim that you browsing through your regular browser, so make sure there are no mistakes\n")
-        data.update({"user_agent": user_agent})
+        data.update({"User-Agent": user_agent})
         write_json(data, cookies_file_name)
 
 
@@ -92,7 +92,7 @@ def get_nick_and_pw(server):
 
 
 headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
-cookies = {"user_agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
+cookies = {"User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 permanent_servers = 'primera', 'secura', 'suna', 'alpha'
 
 
@@ -155,7 +155,7 @@ async def login(server, clear_cookies=False):
             cookies.update(json.load(file))
     if clear_cookies and server in cookies:
         del cookies[server]
-    user_agent = cookies.get("user_agent", 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0')
+    user_agent = cookies.get("User-Agent", 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0')
 
     headers.update({"User-Agent": user_agent, "Referer": f"{URL}index.html", 'Connection': 'keep-alive'})
     online_check = False
