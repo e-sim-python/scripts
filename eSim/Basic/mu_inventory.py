@@ -34,7 +34,7 @@ async def MU_Inventory(server, ctx=None):
             quality = ""
         else:
             quality = item.xpath("div[2]/img/@src")[1].replace(
-                "//cdn.e-sim.org//img/productIcons/", "").replace(".png", "")
+                "//cdn.e-sim.org//img/productIcons/", "").replace("Rewards/", "").replace(".png", "")
         products.append(f"{quality.title()} {name}" if quality else f"{name}")
     if ctx is None:
         from tabulate import tabulate
